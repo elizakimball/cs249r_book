@@ -523,9 +523,9 @@ $$
 Q(r)=Int(r/S) - Z
 $$
 
-where $Q$ is the quantization operator, $r$ is a real valued input (in our case, an activation or weight), $S$ is a real valued scaling factor, and $Z$ is an **integer zero point**[^int-zero]. The `Int` function maps a real value to an integer value through a rounding operation. Through this function, we have effectively mapped real values $r$ to some integer values, resulting in quantized levels which are uniformly spaced.
+where $Q$ is the quantization operator, $r$ is a real valued input (in our case, an activation or weight), $S$ is a real valued scaling factor, and $Z$ is an integer zero point[^int-zero]. The `Int` function maps a real value to an integer value through a rounding operation. Through this function, we have effectively mapped real values $r$ to some integer values, resulting in quantized levels which are uniformly spaced.
 
-[^int-zero]: The integer zero point represents where the value "0" is mapped to in the quantized space. It shifts the range of quantized values so that both positive and negative numbers are represented by unsigned integers.
+[^int-zero]: **Integer zero point:** a reference value that represents where the value "0" is mapped to in the quantized space. It shifts the range of quantized values so that both positive and negative numbers are represented by unsigned integers.
 
 When the need arises for practitioners to retrieve the original higher precision values, real values $r$ can be recovered from quantized values through an operation known as **dequantization**. In the example above, this would mean performing the following operation on our quantized value:
 
@@ -560,7 +560,6 @@ Unlike the two previous approaches which generate deterministic mappings, there 
 #### Zero Shot Quantization
 
 Zero-shot quantization refers to the process of converting a full-precision deep learning model directly into a low-precision, quantized model without the need for any retraining or fine-tuning on the quantized model. The primary advantage of this approach is its efficiency, as it eliminates the often time-consuming and resource-intensive process of retraining a model post-quantization.[^by-lev] By leveraging techniques that anticipate and minimize quantization errors, zero-shot quantization maintains the model’s original accuracy even after reducing its numerical precision. It is particularly useful for Machine Learning as a Service (MLaaS) providers aiming to expedite the deployment of their customer’s workloads without having to access their datasets.
-
 
 [^by-lev]: While zero-shot quantization is convenient, it comes with several trade-offs. Complex models like transformers will see accuracy loss with this compared to traditional approaches. Additionally, some hardware require specific quantization patterns that zero-shot cannot accommodate, and some model architectures need more careful approaches to work for their unique operations.
 
@@ -711,9 +710,9 @@ Pruning and quantization work well together, and it's been found that pruning do
 
 Quantization not only reduces model size but also enables faster computations and draws less power, making it vital to edge development. Edge devices typically have tight resource constraints with compute, memory, and power, which are impossible to meet for many of the deep NN models of today. Furthermore, edge processors do not support floating point operations, making integer quantization particularly important for chips like GAP-8, a RISC-V SoC for edge inference with a dedicated CNN accelerator, which only support integer arithmetic.
 
-One hardware platform utilizing quantization is the ARM Cortex-M group of 32-bit RISC ARM processor cores. They leverage fixed-point quantization with power of two scaling factors so that quantization and dequantization can be efficiently done by **bit shifting**[^bit-shift]. Additionally, Google Edge TPUs, Google's emerging solution for running inference at the edge, is designed for small, low-powered devices and can only support 8-bit arithmetic. Many complex neural network models that could only be deployed on servers due to their high computational needs can now be run on edge devices thanks to recent advancements (e.g. quantization methods) in edge computing field.
+One hardware platform utilizing quantization is the ARM Cortex-M group of 32-bit RISC ARM processor cores. They leverage fixed-point quantization with power of two scaling factors so that quantization and dequantization can be efficiently done by bit shifting[^defn-bit-shift]. Additionally, Google Edge TPUs, Google's emerging solution for running inference at the edge, is designed for small, low-powered devices and can only support 8-bit arithmetic. Many complex neural network models that could only be deployed on servers due to their high computational needs can now be run on edge devices thanks to recent advancements (e.g. quantization methods) in edge computing field.
 
-[^bit-shift]: Bit shifting moves the binary digits or bits of a number left or right. Consider 12 which is 1100 in binary. A left and right shift would produce 24 (11000 in binary) and 6 (0110 in binary), respectively. It is much faster form of quantization since it simply moves bits around in memory.
+[^defn-bit-shift]: **Bit shifting:** a fundamental binary operation that moves the binary digits or bits of a number left or right. Consider 12 which is 1100 in binary. A left and right shift would produce 24 (11000 in binary) and 6 (0110 in binary), respectively. It is much faster form of quantization since it simply moves bits around in memory.
 
 In addition to being an indispensable technique for many edge processors, quantization has also brought noteworthy improvements to non-edge processors such as encouraging such processors to meet the Service Level Agreement (SLA) requirements such as 99th percentile latency.
 
@@ -753,10 +752,10 @@ Here, the search space is restricted to the architectures that perform well on t
 
 #### Single Target, Multiple Platform Configurations
 
-Some hardware may have different configurations. For example, FPGAs[^ex-fpga] have **Configurable Logic Blocks**[^defn-clb] (CLBs) that can be configured by the firmware. This method allows for the HW-NAS to explore different configurations. [@jiang2019accuracy; @yang2020coexploration]
+Some hardware may have different configurations. For example, FPGAs[^ex-fpga] have Configurable Logic Blocks[^defn-clb] (CLBs) that can be configured by the firmware. This method allows for the HW-NAS to explore different configurations. [@jiang2019accuracy; @yang2020coexploration]
 
-[^ex-fpga]: Information on FPGAs can be found in Section 10.3.
-[^defn-clb]: **CLBs** are physical circuit elements on an FPGA chip that can be reconfigured to perform different logical functions. They enable the FPGA to be customized for a specific tasks after manufacturing.
+[^ex-fpga]: Information on FPGAs can be found in its [repective section](https://mlsysbook.ai/contents/core/hw_acceleration/hw_acceleration.html#field-programmable-gate-arrays-fpgas).
+[^defn-clb]: **CLB:** a physical circuit element on an FPGA chip that can be reconfigured to perform different logical functions. It enables the FPGA to be customized for a specific tasks after manufacturing.
 
 #### Multiple Targets
 
@@ -840,9 +839,9 @@ In a contrasting approach, hardware can be custom-designed around software requi
 
 #### SplitNets
 
-SplitNets were introduced in the context of Head-Mounted systems. They distribute the Deep Neural Networks (DNNs) workload among camera sensors and an **aggregator**[^aggregator-defn]. This is particularly compelling in the context of TinyML. The SplitNet framework is a split-aware NAS to find the optimal neural network architecture to achieve good accuracy, split the model among the sensors and the aggregator, and minimize the communication between the sensors and the aggregator. 
+SplitNets were introduced in the context of Head-Mounted systems. They distribute the Deep Neural Networks (DNNs) workload among camera sensors and an aggregator[^defn-aggregator]. This is particularly compelling in the context of TinyML. The SplitNet framework is a split-aware NAS to find the optimal neural network architecture to achieve good accuracy, split the model among the sensors and the aggregator, and minimize the communication between the sensors and the aggregator. 
 
-[^aggregator-defn]: An aggregator is an operator in neural networks that combines multiple inputs or features into a single output. Common examples include sum, mean, or max operations.
+[^defn-aggregator]: An aggregator is an operator in neural networks that combines multiple inputs or features into a single output. Common examples include sum, mean, or max operations.
 
 @fig-splitnet-performance demonstrates how SplitNets (in red) achieves higher accuracy for lower latency (running on ImageNet) than different approaches, such as running the DNN on-sensor (All-on-sensor; in green) or on mobile (All-on-aggregator; in blue). Minimal communication is important in TinyML where memory is highly constrained, this way the sensors conduct some of the processing on their chips and then they send only the necessary information to the aggregator. When testing on ImageNet, SplitNets were able to reduce the latency by one order of magnitude on head-mounted devices. This can be helpful when the sensor has its own chip. [@dong2022splitnets]
 

@@ -487,7 +487,9 @@ Even small embedded devices typically integrate some CPU, enabling edge inferenc
 
 ##### Low Power for Inference
 
-Optimizations like ARM Neon and Intel AVX vector extensions provide power-efficient integer and floating point throughput optimized for "bursty" workloads such as inference [@ignatov2018ai]. While slower than GPUs, CPU inference can be deployed in power-constrained environments. For example, ARM's Cortex-M CPUs now deliver over 1 TOPS of INT8 performance under 1W, enabling keyword spotting and vision applications on edge devices ([ARM](https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/armv8_2d00_m-based-processor-software-development-hints-and-tips)).
+Optimizations like ARM Neon and Intel AVX vector extensions provide power-efficient integer and floating point throughput optimized for "bursty"[^defn-bursty] workloads such as inference [@ignatov2018ai]. While slower than GPUs, CPU inference can be deployed in power-constrained environments. For example, ARM's Cortex-M CPUs now deliver over 1 TOPS of INT8 performance under 1W, enabling keyword spotting and vision applications on edge devices ([ARM](https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/armv8_2d00_m-based-processor-software-development-hints-and-tips)).
+
+[^defn-bursty]: **Bursty:** a characteristic of workloads that refer to sporadic and intensive processing rather than continuous computation. Popular examples include speech processing, real-time sensors, or web servers.
 
 #### Disadvantages
 
@@ -563,7 +565,9 @@ Deploying AI applications on edge devices like mobile phones or smart home appli
 
 #### Rapid Evolution of AI Algorithms
 
-AI is rapidly evolving, with new model architectures, training methodologies, and software frameworks constantly emerging. For example, Transformers have recently become hugely popular for NLP [@young2018recent]. Keeping pace with these algorithmic innovations requires hardware-software co-design to adapt platforms and avoid accrued technical debt quickly.
+AI is rapidly evolving, with new model architectures, training methodologies, and software frameworks constantly emerging. For example, Transformers have recently become hugely popular for Natural Language Porcessing [@young2018recent]. Keeping pace with these algorithmic innovations requires hardware-software co-design to adapt platforms and avoid accrued technical debt[^defn-tech-debt] quickly.
+
+[^defn-tech-debt]: **Technical debt:** future complexity and costs associated with choosing an easier but limited solution now rather than a better approach that will have a larger immediate cost. Learn more about [hidden technical debt in ML systems](https://mlsysbook.ai/contents/core/ops/ops.html#hidden-technical-debt-in-ml-systems) and its impact on system design.
 
 #### Complex Hardware-Software Interactions
 
@@ -590,8 +594,10 @@ The software stack can be optimized to leverage the underlying hardware capabili
 * **Parallelism:** Parallelize matrix computations like convolution or attention layers to maximize throughput on vector engines.
 * **Memory Optimization:** Tune data layouts to improve cache locality based on hardware profiling. This maximizes reuse and minimizes expensive DRAM access.
 * **Compression:** Use sparsity in the models to reduce storage space and save on computation by zero-skipping operations.
-* **Custom Operations:** Incorporate specialized operations like low-precision INT4 or bfloat16 into models to capitalize on dedicated hardware support.
+* **Custom Operations:** Incorporate specialized operations like low-precision INT4 or bfloat16[^defn-bfloat] into models to capitalize on dedicated hardware support.
 * **Dataflow Mapping:** Explicitly map model stages to computational units to optimize data movement on hardware.
+
+[^defn-bfloat]: **Brain Floating Point (bfloat16):** a 16-bit floating point number format specifically created by Google Brain for neural network training and inference. It trades precision for a larger dynamic range compared to float16.
 
 #### Algorithm-Driven Hardware Specialization
 
@@ -613,13 +619,18 @@ A powerful co-design technique involves jointly exploring innovations in neural 
 
 For instance, the shift to mobile architectures like MobileNets [@howard2017mobilenets] was guided by edge device constraints like model size and latency. The quantization [@jacob2018quantization] and pruning techniques [@gale2019state] that unlocked these efficient models became possible thanks to hardware accelerators with native low-precision integer support and pruning support [@asit2021accelerating].
 
-Attention-based models have thrived on massively parallel GPUs and ASICs, where their computation maps well spatially, as opposed to RNN architectures, which rely on sequential processing. The co-evolution of algorithms and hardware unlocked new capabilities.
+Attention-based models[^defn-atten-model] have thrived on massively parallel GPUs and ASICs, where their computation maps well spatially, as opposed to RNN architectures[^rnn-arch], which rely on sequential processing. The co-evolution of algorithms and hardware unlocked new capabilities.
+
+[^defn-atten-model]: **Attention-based model:** a type of neural network architecture that emphasizes specific parts of the input data to make decisions. For large language models, the model will calculate an attention score for each word in a sequence to indicate which words are more important for the current task.
+[^rnn-arch]: Compared to transformers, RNN architectures are more difficult to parallelize since they process data sequentially.
 
 Effective co-exploration requires close collaboration between algorithm researchers and hardware architects. Rapid prototyping on FPGAs [@zhang2015fpga] or specialized AI simulators allows quick evaluation of different pairings of model architectures and hardware designs pre-silicon.
 
 For example, Google's TPU architecture evolved with optimizations to TensorFlow models to maximize performance on image classification. This tight feedback loop yielded models tailored for the TPU that would have been unlikely in isolation.
 
-Studies have shown 2-5x higher performance and efficiency gains with algorithm-hardware co-exploration than isolated algorithm or hardware optimization efforts [@suda2016throughput]. Parallelizing the joint development also reduces time-to-deployment.
+Studies have shown 2-5x higher performance and efficiency gains with algorithm-hardware co-exploration than isolated algorithm or hardware optimization efforts [@suda2016throughput]. Parallelizing the joint development also reduces time-to-deployment[^defn-ttd].
+
+[^defn-ttd]: **Time-to-deployment:** the total time from initial concept to having a working model in production.
 
 Overall, exploring the tight interdependencies between model innovation and hardware advances unlocks opportunities that must be visible when tackled sequentially. This synergistic co-design yields solutions greater than the sum of their parts.
 
@@ -629,7 +640,10 @@ While collaborative co-design can improve efficiency, adaptability, and time to 
 
 #### Increased Prototyping Costs
 
-More extensive prototyping is required to evaluate different hardware-software pairings. The need for rapid, iterative prototypes on FPGAs or emulators increases validation overhead. For example, Microsoft found that more prototypes were needed to co-design an AI accelerator than sequential design [@fowers2018configurable].
+More extensive prototyping is required to evaluate different hardware-software pairings. The need for rapid, iterative prototypes on FPGAs or emulators[^defn-emulator] increases validation overhead. For example, Microsoft found that more prototypes were needed to co-design an AI accelerator than sequential design [@fowers2018configurable].
+
+[^defn-emulator]: **Emulator:** a software program that mimics the behavior of a computer system (the target system) on another system (the host system).
+
 
 #### Team and Organizational Hurdles
 
@@ -685,10 +699,13 @@ We've learned that fancy AI hardware needs special software to work magic. TVM i
 
 Specialized libraries and runtimes provide software abstractions to access and maximize the utilization of AI accelerators:
 
-* **Math Libraries:** Highly optimized implementations of linear algebra primitives like GEMM, FFTs, convolutions, etc., tailored to the target hardware. [Nvidia cuBLAS](https://developer.nvidia.com/cublas), [Intel MKL](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html), and [Arm compute libraries](https://www.arm.com/technologies/compute-library) are examples.
+* **Math Libraries:** Highly optimized implementations of linear algebra primitives like GEMM, FFTs[^defn-ffts], convolutions, etc., tailored to the target hardware. [Nvidia cuBLAS](https://developer.nvidia.com/cublas), [Intel MKL](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html), and [Arm compute libraries](https://www.arm.com/technologies/compute-library) are examples.
 * **Framework Integrations:** Libraries to accelerate deep learning frameworks like TensorFlow, PyTorch, and MXNet on supported hardware. For example, [cuDNN](https://developer.nvidia.com/cudnn) accelerates CNNs on Nvidia GPUs.
 * **Runtimes:** Software to handle accelerator execution, including scheduling, synchronization, memory management, and other tasks. [Nvidia TensorRT](https://developer.nvidia.com/tensorrt) is an inference optimizer and runtime.
 * **Drivers and Firmware:** Low-level software to interface with hardware, initialize devices, and handle execution. Vendors like Xilinx provide drivers for their accelerator boards.
+
+
+[^defn-ffts]: **Fast Fourier Transform (FFT):** an important algorithm for processing signals and data.
 
 For instance, PyTorch integrators use cuDNN and cuBLAS libraries to accelerate training on Nvidia GPUs. The TensorFlow XLA runtime optimizes and compiles models for accelerators like TPUs. Drivers initialize devices and offload operations.
 
@@ -704,7 +721,7 @@ Optimizing compilers is key in extracting maximum performance and efficiency fro
 * **Graph Optimizations:** Graph-level optimizations like operator fusion, rewriting, and layout transformations to optimize performance on target hardware.
 * **Code Generation:** Generating optimized low-level code for accelerators from high-level models and frameworks.
 
-For example, the TVM open compiler stack applies quantization for a BERT model targeting Arm GPUs. It fuses pointwise convolution operations and transforms the weight layout to optimize memory access. Finally, it emits optimized OpenGL code to run the GPU workload.
+For example, the TVM open compiler stack applies quantization for a BERT model targeting ARM GPUs. It fuses pointwise convolution operations and transforms the weight layout to optimize memory access. Finally, it emits optimized OpenGL code to run the GPU workload.
 
 Key compiler optimizations include maximizing parallelism, improving data locality and reuse, minimizing memory footprint, and exploiting custom hardware operations. Compilers build and optimize machine learning workloads holistically across hardware components like CPUs, GPUs, and other accelerators.
 
@@ -769,7 +786,9 @@ To address these hurdles, the AI industry is moving towards several solutions:
 
 ##### Standardization Initiatives
 
-The [Open Neural Network Exchange (ONNX)](https://onnx.ai/) is at the forefront of this pursuit, proposing an open and shared ecosystem that promotes model interchangeability. ONNX facilitates the use of AI models across various frameworks, allowing models trained in one environment to be efficiently deployed in another, significantly reducing the need for time-consuming rewrites or adjustments.
+The [Open Neural Network Exchange (ONNX)](https://onnx.ai/)[^defn-onnx] is at the forefront of this pursuit, proposing an open and shared ecosystem that promotes model interchangeability. ONNX facilitates the use of AI models across various frameworks, allowing models trained in one environment to be efficiently deployed in another, significantly reducing the need for time-consuming rewrites or adjustments.
+
+[^defn-onnx]: **ONNX:** an open-source format for representing machine learning models. It can be thought of as a translator for AI that helps models speak different framework languages.
 
 ##### Cross-Platform Frameworks
 
@@ -777,7 +796,9 @@ Complementing the standardization efforts, cross-platform frameworks such as Ten
 
 ##### Hardware-agnostic Platforms
 
-The rise of hardware-agnostic platforms has also played an important role in democratizing the use of AI. By creating environments where AI applications can be executed on various accelerators, these platforms remove the burden of hardware-specific coding from developers. This abstraction simplifies the development process and opens up new possibilities for innovation and application deployment, free from the constraints of hardware specifications.
+The rise of hardware-agnostic platforms has also played an important role in democratizing the use of AI. By creating environments where AI applications can be executed on various accelerators, these platforms remove the burden of hardware-specific coding from developers. This abstraction simplifies the development process and opens up new possibilities for innovation and application deployment, free from the constraints of hardware specifications.[^hard-specs]
+
+[^hard-specs]: By relying on platforms generalizable to various accelerators, hardware-agnostic platforms sacrifices the ability to exploit unique hardware capabilities. Performances are reduced compared to hardware-specific optimized code and the memory footprint is usually larger due ot the need to support different hardware types.
 
 ##### Advanced Compilation Tools
 
@@ -793,9 +814,13 @@ Solving the portability challenges is crucial for the AI field to realize the fu
 
 Power consumption is a crucial issue in the development and operation of data center AI accelerators, like Graphics Processing Units (GPUs) and Tensor Processing Units (TPUs) [@jouppi2017indatacenter] [@norrie2021design] [@jouppi2023tpu]. These powerful components are the backbone of contemporary AI infrastructure, but their high energy demands contribute to the environmental impact of technology and drive up operational costs significantly. As data processing needs become more complex, with the popularity of AI and deep learning increasing, there's a pressing demand for GPUs and TPUs that can deliver the necessary computational power more efficiently. The impact of such advancements is two-fold: they can lower these technologies' environmental footprint and reduce the cost of running AI applications.
 
-Emerging hardware technologies are at the cusp of revolutionizing power efficiency in this sector. Photonic computing, for instance, uses light rather than electricity to carry information, offering a promise of high-speed processing with a fraction of the power usage. We look deeper into this and other innovative technologies in the "Emerging Hardware Technologies" section, exploring their potential to address current power consumption challenges.
+Emerging hardware technologies are at the cusp of revolutionizing power efficiency in this sector. Photonic computing[^photonic], for instance, uses light rather than electricity to carry information, offering a promise of high-speed processing with a fraction of the power usage. We look deeper into this and other innovative technologies in the "Emerging Hardware Technologies" section, exploring their potential to address current power consumption challenges.
 
-At the edge of the network, AI accelerators are engineered to process data on devices like smartphones, IoT sensors, and smart wearables. These devices often work under severe power limitations, necessitating a careful balancing act between performance and power usage. A high-performance AI model may provide quick results but at the cost of depleting battery life swiftly and increasing thermal output, which may affect the device's functionality and durability. The stakes are higher for devices deployed in remote or hard-to-reach areas, where consistent power supply cannot be guaranteed, underscoring the need for low-power-consuming solutions.
+[^photonic]: Photonic computing can save 10-100 times more power than electronic systems. Integrating photonic computing with existing systems is a key challenge.
+
+At the edge of the network, AI accelerators are engineered to process data on devices like smartphones, IoT sensors, and smart wearables. These devices often work under severe power limitations, necessitating a careful balancing act between performance and power usage. A high-performance AI model may provide quick results but at the cost of depleting battery life[^bat-life] swiftly and increasing thermal output, which may affect the device's functionality and durability. The stakes are higher for devices deployed in remote or hard-to-reach areas, where consistent power supply cannot be guaranteed, underscoring the need for low-power-consuming solutions.
+
+[^bat-life]: Devices powered by a battery typically need below 1W to operate.
 
 Latency issues further compound the challenge of power efficiency at the edge. Edge AI applications in fields such as autonomous driving and healthcare monitoring require speed, precision, and reliability, as delays in processing can lead to serious safety risks. For these applications, developers must optimize both the AI algorithms and the hardware design to strike an optimal balance between power consumption and latency.
 
@@ -835,15 +860,22 @@ In response, new manufacturing techniques like wafer-scale fabrication and advan
 
 #### Wafer-scale AI
 
-Wafer-scale AI takes an extremely integrated approach, manufacturing an entire silicon wafer as one gigantic chip. This differs drastically from conventional CPUs and GPUs, which cut each wafer into many smaller individual chips. @fig-wafer-scale shows a comparison between Cerebras Wafer Scale Engine 2, which is the largest chip ever built, and the largest GPU. While some GPUs may contain billions of transistors, they still pale in Comparison to the scale of a wafer-size chip with over a trillion transistors.
+Wafer-scale AI takes an extremely integrated approach, manufacturing an entire silicon wafer[^defn-silwaf] as one gigantic chip. This differs drastically from conventional CPUs and GPUs, which cut each wafer into many smaller individual chips. @fig-wafer-scale shows a comparison between Cerebras Wafer Scale Engine 2, which is the largest chip ever built, and the largest GPU. While some GPUs may contain billions of transistors, they still pale in Comparison to the scale of a wafer-size chip with over a trillion transistors.
+
+[^defn-silwaf]: **Silicon wafer:** a thin, circular piece of silicon that acts as the foundation for integrated circuits and semiconductor devices.
+
 
 ![Wafer-scale vs. GPU. Source: [Cerebras](https://www.cerebras.net/product-chip/).](images/png/aimage1.png){#fig-wafer-scale}
 
-The wafer-scale approach also diverges from more modular system-on-chip designs that still have discrete components communicating by bus. Instead, wafer-scale AI enables full customization and tight integration of computation, memory, and interconnects across the entire die.
+The wafer-scale approach also diverges from more modular system-on-chip designs that still have discrete components communicating by bus[^defn-bus]. Instead, wafer-scale AI enables full customization and tight integration of computation, memory, and interconnects across the entire die.
+
+[^defn-bus]: **Bus:** a communication channel that carries data and control signals between different parts of a system.
 
 By designing the wafer as one integrated logic unit, data transfer between elements is minimized. This provides lower latency and power consumption than discrete system-on-chip or chiplet designs. While chiplets can offer flexibility by mixing and matching components, communication between chiplets is challenging. The monolithic nature of wafer-scale integration eliminates these inter-chip communication bottlenecks.
 
-However, the ultra-large-scale also poses difficulties for manufacturability and yield with wafer-scale designs. Defects in any region of the wafer can make (certain parts of) the chip unusable. Specialized lithography techniques are required to produce such large dies. So, wafer-scale integration pursues the maximum performance gains from integration but requires overcoming substantial fabrication challenges.
+However, the ultra-large-scale also poses difficulties for manufacturability[^man-ex] and yield with wafer-scale designs. Defects in any region of the wafer can make (certain parts of) the chip unusable. Specialized lithography techniques are required to produce such large dies. So, wafer-scale integration pursues the maximum performance gains from integration but requires overcoming substantial fabrication challenges.
+
+[^man-ex]: Manufacturing a wafer is similar to trying to bake one perfect giant cookie instead of many smaller ones.
 
 @vid-wfscale provides additional context about wafer-scale AI chips.
 
@@ -861,7 +893,9 @@ Chiplet design refers to a semiconductor architecture in which a single integrat
 
 @fig-chiplet illustrates this concept. For AI hardware, chiplets enable the mixing of different types of chips optimized for tasks like matrix multiplication, data movement, analog I/O, and specialized memories. This heterogeneous integration differs greatly from wafer-scale integration, where all logic is manufactured as one monolithic chip. Companies like Intel and AMD have adopted chiplet designs for their CPUs.
 
-Chiplets are interconnected using advanced packaging techniques like high-density substrate interposers, 2.5D/3D stacking, and wafer-level packaging. This allows combining chiplets fabricated with different process nodes, specialized memories, and various optimized AI engines.
+Chiplets are interconnected using advanced packaging techniques[^pack-tech] like high-density substrate interposers, 2.5D/3D stacking, and wafer-level packaging. This allows combining chiplets fabricated with different process nodes, specialized memories, and various optimized AI engines.
+
+[^pack-tech]: Advanced packaging is crucial for chiplet-based designs. After splitting a larger SoC into multiple chiplets, they must be reconnected at high speed and low latency to restore the communication that would have existed on a single monolithic chip.
 
 ![Chiplet partitioning. Source: @vivet2021intact.](images/png/aimage2.png){#fig-chiplet}
 
@@ -882,13 +916,18 @@ The key objective of chiplets is finding the right balance between modular flexi
 
 ### Neuromorphic Computing {#sec-neuromorphic}
 
-Neuromorphic computing is an emerging field aiming to emulate the efficiency and robustness of biological neural systems for machine learning applications. A key difference from classical Von Neumann architectures is the merging of memory and processing in the same circuit [@schuman2022opportunities; @markovic2020physics; @furber2016large], as illustrated in @fig-neuromorphic. The structure of the brain inspires this integrated approach. A key advantage is the potential for orders of magnitude improvement in energy-efficient computation compared to conventional AI hardware. For example, estimates project 100x-1000x gains in energy efficiency versus current GPU-based systems for equivalent workloads.
+Neuromorphic computing[^chiplets] is an emerging field aiming to emulate the efficiency and robustness of biological neural systems for machine learning applications. A key difference from classical Von Neumann architectures is the merging of memory and processing in the same circuit [@schuman2022opportunities; @markovic2020physics; @furber2016large], as illustrated in @fig-neuromorphic. The structure of the brain inspires this integrated approach. A key advantage is the potential for orders of magnitude improvement in energy-efficient computation compared to conventional AI hardware. For example, estimates project 100x-1000x gains[^gains] in energy efficiency versus current GPU-based systems for equivalent workloads.
+
+[^chiplets]: While chiplets improve performance at the system-integration level, neuromorphic chips use an entirely new computing paradigm.
+[^gains]: By only firing signals when events occur, the neuromorphic systems can avoid constant clock-driven updates to save power.
 
 ![Comparison of the von Neumann architecture with the neuromorphic architecture. Source: @schuman2022opportunities.](images/png/aimage3.png){#fig-neuromorphic}
 
 Intel and IBM are leading commercial efforts in neuromorphic hardware. Intel's Loihi and Loihi 2 chips [@davies2018loihi; @davies2021advancing] offer programmable neuromorphic cores with on-chip learning. IBM's Northpole [@modha2023neural] device comprises over 100 million magnetic tunnel junction synapses and 68 billion transistors. These specialized chips deliver benefits like low power consumption for edge inference.
 
-Spiking neural networks (SNNs) [@maass1997networks] are computational models for neuromorphic hardware. Unlike deep neural networks communicating via continuous values, SNNs use discrete spikes that are more akin to biological neurons. This allows efficient event-based computation rather than constant processing. Additionally, SNNs consider the temporal and spatial characteristics of input data. This better mimics biological neural networks, where the timing of neuronal spikes plays an important role. 
+Spiking neural networks (SNNs) [@maass1997networks] are computational models for neuromorphic hardware. Unlike deep neural networks communicating via continuous values, SNNs use discrete spikes[^discrete-spikes] that are more akin to biological neurons. This allows efficient event-based computation rather than constant processing. Additionally, SNNs consider the temporal and spatial characteristics of input data. This better mimics biological neural networks, where the timing of neuronal spikes plays an important role. 
+
+[^discrete-spikes]: These spikes capture the timing aspect of signals, and the SNNs become sensitive to these precise temporal patterns.
 
 However, training SNNs remains challenging due to the added temporal complexity. @fig-spiking provides an overview of the spiking methodology: (a) illustration of a neuron; (b) Measuring an action potential propagated along the axon of a neuron. Only the action potential is detectable along the axon; (c) The neuron's spike is approximated with a binary representation; (d) Event-Driven Processing; (e) Active Pixel Sensor and Dynamic Vision Sensor.
 
@@ -904,7 +943,9 @@ You can also watch @vid-snn linked below for a more detailed explanation.
 
 :::
 
-Specialized nanoelectronic devices called memristors [@chua1971memristor] are synaptic components in neuromorphic systems. Memristors act as nonvolatile memory with adjustable conductance, emulating the plasticity of real synapses. Memristors enable in-situ learning without separate data transfers by combining memory and processing functions. However, memristor technology has yet to reach maturity and scalability for commercial hardware.
+Specialized nanoelectronic devices called memristors[^mem-name] [@chua1971memristor] are synaptic components in neuromorphic systems. Memristors act as nonvolatile memory with adjustable conductance, emulating the plasticity of real synapses. Memristors enable in-situ learning without separate data transfers by combining memory and processing functions. However, memristor technology has yet to reach maturity and scalability for commercial hardware.
+
+[^mem-name]: Memristors can be referred to as memory resistors because their resistance changes based on the history of the current flow of information.
 
 The integration of photonics with neuromorphic computing [@shastri2021photonics] has recently emerged as an active research area. Using light for computation and communication allows high speeds and reduced energy consumption. However, fully realizing photonic neuromorphic systems requires overcoming design and integration challenges.
 
@@ -934,7 +975,10 @@ Flexible AI hardware can conform to curvy surfaces and operate efficiently with 
 
 ![Flexible device prototype. Source: Jabil Circuit.](images/jpg/flexible-circuit.jpeg){#fig-flexible-device}
 
-The field is enabled by advances in organic semiconductors and nanomaterials that can be deposited on thin, flexible films. However, fabrication remains challenging compared to mature silicon processes. Flexible circuits currently typically exhibit lower performance than rigid equivalents. Still, they promise to transform electronics into lightweight, bendable materials.
+The field is enabled by advances in organic[^defn-organic] semiconductors and nanomaterials that can be deposited on thin, flexible films. However, fabrication remains challenging compared to mature silicon processes. Flexible circuits currently typically exhibit lower performance than rigid equivalents.[^rigid-eq] Still, they promise to transform electronics into lightweight, bendable materials.
+
+[^defn-organic]: **Organic:** carbon-based. Organic thin-film transistors can be made at lower temperatures than silicon which is essential for producing flexible circuits with plastic substrates that cannot withstand high heat.
+[^rigid-eq]: Flexible circuits have lower performance than rigid circuits due to material constraints and structural issues. By repeatedly bending and flexing the materials, microcracks in conductors, delamination between layers, and material fatigue can occur.
 
 Flexible electronics use cases are well-suited for intimate integration with the human body. Potential medical AI applications include bio-integrated sensors, soft assistive robots, and implants that monitor or stimulate the nervous system intelligently. Specifically, flexible electrode arrays could enable higher-density, less-invasive neural interfaces compared to rigid equivalents.
 
@@ -948,11 +992,15 @@ Ethically, incorporating smart, machine-learning-driven sensors within the body 
 
 ### Memory Technologies
 
-Memory technologies are critical to AI hardware, but conventional DDR DRAM and SRAM create bottlenecks. AI workloads require high bandwidth (>1 TB/s). Extreme scientific applications of AI require extremely low latency (<50 ns) to feed data to compute units [@duarte2022fastml], high density (>128Gb) to store large model parameters and data sets, and excellent energy efficiency (<100 fJ/b) for embedded use [@verma2019memory]. New memories are needed to meet these demands. Emerging options include several new technologies:
+Memory technologies are critical to AI hardware, but conventional DDR[^defn-ddr] DRAM and SRAM create bottlenecks. AI workloads require high bandwidth (>1 TB/s). Extreme scientific applications of AI require extremely low latency (<50 ns) to feed data to compute units [@duarte2022fastml], high density (>128Gb) to store large model parameters and data sets, and excellent energy efficiency (<100 fJ/b) for embedded use [@verma2019memory]. New memories are needed to meet these demands. Emerging options include several new technologies:
+
+[^defn-ddr]: **Double data rate (DDR):** type of computer memory technology that transfers data on the rising and falling edges of the clock signal, doubling the bandwidth at same clock frequency.
 
 * Resistive RAM (ReRAM) can improve density with simple, passive arrays. However, challenges around variability remain [@chi2016prime].
 * Phase change memory (PCM) exploits the unique properties of chalcogenide glass. Crystalline and amorphous phases have different resistances. Intel's Optane DCPMM provides fast (100ns), high endurance PCM. However, challenges include limited write cycles and high reset current [@burr2016recent].
-* 3D stacking can also boost memory density and bandwidth by vertically integrating memory layers with TSV interconnects [@loh20083dstacked]. For example, HBM provides 1024-bit wide interfaces.
+* 3D stacking can also boost memory density and bandwidth by vertically integrating memory layers with TSV interconnects [@loh20083dstacked].[^tsv] For example, HBM provides 1024-bit wide interfaces.
+
+[^tsv]: Both power and time are saved by stacking memory on top of computer layers since the data does not need to traverse off of the chip.
 
 New memory technologies, with their innovative cell architectures and materials, are critical to unlocking the next level of AI hardware performance and efficiency. Realizing their benefits in commercial systems remains an ongoing challenge.
 
@@ -989,7 +1037,10 @@ As a result, optical computing is still in the very early research stage despite
 
 ### Quantum Computing
 
-Quantum computers leverage unique phenomena of quantum physics, like superposition and entanglement, to represent and process information in ways not possible classically. Instead of binary bits, the fundamental unit is the quantum bit or qubit. Unlike classical bits, which are limited to 0 or 1, qubits can exist simultaneously in a superposition of both states due to quantum effects.
+Quantum computers leverage unique phenomena of quantum physics, like superposition[^defn-super] and entanglement[^defn-entang], to represent and process information in ways not possible classically. Instead of binary bits, the fundamental unit is the quantum bit or qubit. Unlike classical bits, which are limited to 0 or 1, qubits can exist simultaneously in a superposition of both states due to quantum effects.
+
+[^defn-super]: **Superposition:** a principle that states a qubit can exist in a combination, or superposition, of both states 0 and 1 at the same time. When the qubit is measured, it no longer has a superposition, and it collapses to either 0 and 1.
+[^defn-entang]: **Entanglement:** a quantum phenomenon where measuring a qubit can immediately affect the state of another qubit. This allows qubits to share and process information faster than classical computation.
 
 Multiple qubits can also be entangled, leading to exponential information density but introducing probabilistic results. Superposition enables parallel computation on all possible states, while entanglement allows nonlocal correlations between qubits. @fig-qubit visually conveys the differences between classical bits in computing and quantum bits (qubits).
 
@@ -1008,7 +1059,7 @@ However, quantum states are fragile and prone to errors that require error-corre
 * Restricted set of available quantum gates and circuits relative to classical programming.
 * Lack of datasets and benchmarks to evaluate quantum ML in practical domains.
 
-While meaningful quantum advantage for ML remains far off, active research at companies like [D-Wave](https://www.dwavesys.com/company/about-d-wave/), [Rigetti](https://www.rigetti.com/), and [IonQ](https://ionq.com/) is advancing quantum computer engineering and quantum algorithms. Major technology companies like Google, [IBM](https://www.ibm.com/quantum?utm_content=SRCWW&p1=Search&p4C700050385964705&p5=e&gclid=Cj0KCQjw-pyqBhDmARIsAKd9XIPD9U1Sjez_S0z5jeDDE4nRyd6X_gtVDUKJ-HIolx2vOc599KgW8gAaAv8gEALw_wcB&gclsrc=aw.ds), and Microsoft are actively exploring quantum computing. Google recently announced a 72-qubit quantum processor called [Bristlecone](https://blog.research.google/2018/03/a-preview-of-bristlecone-googles-new.html) and plans to build a 49-qubit commercial quantum system. Microsoft also has an active research program in topological quantum computing and collaborates with quantum startup [IonQ](https://ionq.com/)
+While meaningful quantum advantage for ML remains far off, active research at companies like [D-Wave](https://www.dwavesys.com/company/about-d-wave/), [Rigetti](https://www.rigetti.com/), and [IonQ](https://ionq.com/) is advancing quantum computer engineering and quantum algorithms. Major technology companies like Google, [IBM](https://www.ibm.com/quantum?utm_content=SRCWW&p1=Search&p4C700050385964705&p5=e&gclid=Cj0KCQjw-pyqBhDmARIsAKd9XIPD9U1Sjez_S0z5jeDDE4nRyd6X_gtVDUKJ-HIolx2vOc599KgW8gAaAv8gEALw_wcB&gclsrc=aw.ds), and Microsoft are actively exploring quantum computing. Google recently announced a 72-qubit quantum processor called [Bristlecone](https://blog.research.google/2018/03/a-preview-of-bristlecone-googles-new.html) and plans to build a 49-qubit commercial quantum system. Microsoft also has an active research program in topological quantum computing and collaborates with quantum startup [IonQ](https://ionq.com/).
 
 Quantum techniques may first make inroads into optimization before more generalized ML adoption. Realizing quantum ML's full potential awaits major milestones in quantum hardware development and ecosystem maturity. @fig-q-computing illustratively compares quantum computing and classical computing.
 

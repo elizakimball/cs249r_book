@@ -89,8 +89,10 @@ Power benchmarking aims to measure the energy efficiency of computing systems, e
 Several key benchmarks have emerged in this space:
 
 * **SPEC Power:** Introduced in 2007, [SPEC Power](https://www.spec.org/power/) was one of the first industry-standard benchmarks for evaluating the power and performance characteristics of computer servers.
-* **Green500:** The [Green500](https://top500.org/lists/green500/) list ranks supercomputers by energy efficiency, complementing the performance-focused TOP500 list.
+* **Green500:** The [Green500](https://top500.org/lists/green500/) list ranks supercomputers by energy efficiency, complementing the performance-focused TOP500 list.[^green-500]
 * **Energy Star:** While not a benchmark per se, [ENERGY STAR for Computers](https://www.energystar.gov/products/computers) certification program has driven manufacturers to improve the energy efficiency of consumer electronics.
+
+[^green-500]: The Green500 revealed a key insight for sustainable AI: the most powerful supercomputers are not always the most efficient.
 
 Power benchmarking faces unique challenges, such as accounting for different workloads and system configurations, and measuring power consumption accurately across a range of hardware that scales from microWatts to megaWatts in power consumption. As AI and edge computing continue to grow, power benchmarking is likely to become even more critical, driving the development of specialized energy-efficient AI hardware and software optimizations.
 
@@ -98,7 +100,9 @@ Power benchmarking faces unique challenges, such as accounting for different wor
 
 In addition to industry-standard benchmarks, there are custom benchmarks specifically designed to meet the unique requirements of a particular application or task. They are tailored to the specific needs of the user or developer, ensuring that the performance metrics are directly relevant to the intended use of the AI model or system. Custom benchmarks can be created by individual organizations, researchers, or developers and are often used in conjunction with industry-standard benchmarks to provide a comprehensive evaluation of AI performance.
 
-For example, a hospital could develop a benchmark to assess an AI model for predicting patient readmission. This benchmark would incorporate metrics relevant to the hospital's patient population, like demographics, medical history, and social factors. Similarly, a financial institution's fraud detection benchmark could focus on identifying fraudulent transactions accurately while minimizing false positives. In automotive, an autonomous vehicle benchmark may prioritize performance in diverse conditions, responding to obstacles, and safety. Retailers could benchmark recommendation systems using click-through rate, conversion rate, and customer satisfaction. Manufacturing companies might benchmark quality control systems on defect identification, efficiency, and waste reduction. In each industry, custom benchmarks provide organizations with evaluation criteria tailored to their unique needs and context. This allows for a more meaningful assessment of how well AI systems meet requirements.
+For example, a hospital could develop a benchmark to assess an AI model for predicting patient readmission.[^readmission] This benchmark would incorporate metrics relevant to the hospital's patient population, like demographics, medical history, and social factors. Similarly, a financial institution's fraud detection benchmark could focus on identifying fraudulent transactions accurately while minimizing false positives. In automotive, an autonomous vehicle benchmark may prioritize performance in diverse conditions, responding to obstacles, and safety. Retailers could benchmark recommendation systems using click-through rate, conversion rate, and customer satisfaction. Manufacturing companies might benchmark quality control systems on defect identification, efficiency, and waste reduction. In each industry, custom benchmarks provide organizations with evaluation criteria tailored to their unique needs and context. This allows for a more meaningful assessment of how well AI systems meet requirements.
+
+[^readmission]: In medical contexts, AI benchmarks will often prioritize false negative rates over false positives since not identifying a disease is far worse than a false alarm. This balance between false negatives and false positives will vary between use cases.
 
 The advantage of custom benchmarks lies in their flexibility and relevance. They can be designed to test specific performance aspects critical to the success of the AI solution in its intended application. This allows for a more targeted and accurate assessment of the AI model or system's capabilities. Custom benchmarks also provide valuable insights into the performance of AI solutions in real-world scenarios, which can be crucial for identifying potential issues and areas for improvement.
 
@@ -155,7 +159,9 @@ These types of microbenchmarks include zooming into very specific operations or 
 
 * **Layer Benchmarks:** Evaluations of the computational efficiency of distinct neural network layers, such as LSTM or Transformer blocks, when operating on standardized input sizes.
 
-Example: [DeepBench](https://github.com/baidu-research/DeepBench), introduced by Baidu, is a good benchmark that evaluates fundamental deep learning operations, such as those mentioned above. DeepBench assesses the performance of basic operations in deep learning models, providing insights into how different hardware platforms handle neural network training and inference.
+Example: [DeepBench](https://github.com/baidu-research/DeepBench), introduced by Baidu, is a good benchmark that evaluates fundamental deep learning operations, such as those mentioned above. DeepBench assesses the performance of basic operations in deep learning models, providing insights into how different hardware platforms[^deep-bench] handle neural network training and inference.
+
+[^deep-bench]: Performance measured by benchmarks like DeepBench can vary significantly across seemingly identical hardware configurations. For example, data center temperatures and power delivery quality will cause performance differences for the same type of GPUs. It is essential to consider these benchmark results as guidance rather than absolute performance metrics.
 
 :::{#exr-cuda .callout-caution collapse="true"}
 
@@ -207,7 +213,9 @@ At its core, an AI benchmark is more than just a test or a score; it's a compreh
 
 #### Standardized Datasets
 
-Datasets serve as the foundation for most AI benchmarks. They provide a consistent data set on which models are trained and evaluated, ensuring a level playing field for comparisons.
+Datasets serve as the foundation for most AI benchmarks. They provide a consistent[^consistent] data set on which models are trained and evaluated, ensuring a level playing field for comparisons.
+
+[^consistent]: While standardized datasets will provide a consistent benchmark, they may have systemic biases ingrained in them that do not reflect current real-world distributions and can introduce geographic or cultural biases.
 
 Example: ImageNet, a large-scale dataset containing millions of labeled images spanning thousands of categories, is a popular benchmarking standard for image classification tasks.
 
@@ -219,7 +227,9 @@ Example: Tasks for natural language processing benchmarks might include sentimen
 
 #### Evaluation Metrics
 
-Once a task is defined, benchmarks require metrics to quantify performance. These metrics offer objective measures to compare different models or systems. In classification tasks, metrics like accuracy, precision, recall, and [F1 score](https://en.wikipedia.org/wiki/F-score) are commonly used. Mean squared or absolute errors might be employed for regression tasks. We can also measure the power consumed by the benchmark execution to calculate energy efficiency.
+Once a task is defined, benchmarks require metrics to quantify performance. These metrics offer objective measures to compare different models or systems. In classification tasks, metrics like accuracy[^accur-lim], precision, recall, and [F1 score](https://en.wikipedia.org/wiki/F-score) are commonly used. Mean squared or absolute errors might be employed for regression tasks. We can also measure the power consumed by the benchmark execution to calculate energy efficiency.
+
+[^accur-lim]: Standard metrics may not reflect all aspects of performance. For example, accuracy does not capture inference speed. Standard metrics should be supplemented with application-specific metrics to combat this limitation.
 
 #### Baselines and Baseline Models
 
@@ -262,9 +272,11 @@ The development life cycle of a machine learning model involves two critical pha
 
 #### Purpose
 
-From a systems perspective, training machine learning models is resource-intensive, especially when working with large models. These models often contain billions or even trillions of trainable parameters and require enormous amounts of data, often on the scale of many terabytes. For example, [OpenAI's GPT-3](https://arxiv.org/abs/2005.14165) [@brown2020language] has 175 billion parameters, was trained on 45 TB of compressed plaintext data, and required 3,640 petaflop-days of compute for pretraining. ML training benchmarks evaluate the systems and resources required to manage the computational load of training such models.
+From a systems perspective, training machine learning models is resource-intensive, especially when working with large models. These models often contain billions or even trillions of trainable parameters and require enormous amounts of data, often on the scale of many terabytes. For example, [OpenAI's GPT-3](https://arxiv.org/abs/2005.14165) [@brown2020language] has 175 billion parameters, was trained on 45 TB of compressed plaintext data, and required 3,640 petaflop-days of compute for pretraining.[^compute-pre] ML training benchmarks evaluate the systems and resources required to manage the computational load of training such models.
 
-Efficient data storage and delivery during training also play a major role in the training process. For instance, in a machine learning model that predicts bounding boxes around objects in an image, thousands of images may be required. However, loading an entire image dataset into memory is typically infeasible, so practitioners rely on data loaders (as disucssed in @sec-frameworks-data-loaders) from ML frameworks. Successful model training depends on timely and efficient data delivery, making it essential to benchmark tools like data loaders, data pipelines, preprocessing speed, and storage retrieval times to understand their impact on training performance.
+[^compute-pre]: Ideal conditions are often assumed for the published computational requirements, however real-world training often involved constraints based on hardware availability, network bandwidth, and power limitations.
+
+Efficient data storage and delivery during training also play a major role in the training process. For instance, in a machine learning model that predicts bounding boxes around objects in an image, thousands of images may be required. However, loading an entire image dataset into memory is typically infeasible, so practitioners rely on data loaders (as discussed in @sec-frameworks-data-loaders) from ML frameworks. Successful model training depends on timely and efficient data delivery, making it essential to benchmark tools like data loaders, data pipelines, preprocessing speed, and storage retrieval times to understand their impact on training performance.
 
 Hardware selection is another key factor in training machine learning systems, as it can significantly impact training time. Training benchmarks evaluate CPU, GPU, memory, and network utilization during the training phase to guide system optimizations. Understanding how resources are used is essential: Are GPUs being fully leveraged? Is there unnecessary memory overhead? Benchmarks can uncover bottlenecks or inefficiencies in resource utilization, leading to cost savings and performance improvements.
 
@@ -276,7 +288,9 @@ When viewed from a systems perspective, training metrics offer insights that tra
 
 The following metrics are often considered important:
 
-1. **Training Time:** The time it takes to train a model from scratch until it reaches a satisfactory performance level. It directly measures the computational resources required to train a model. For example, [Google's BERT](https://arxiv.org/abs/1810.04805) [@devlin2018bert] is a natural language processing model that requires several days to train on a massive corpus of text data using multiple GPUs. The long training time is a significant resource consumption and cost challenge. In some cases, benchmarks can instead measure the training throughput (training samples per unit of time). Throughput can be calculated much faster and easier than training time but may obscure the metrics we really care about (e.g. time to train).
+1. **Training Time:** The time it takes to train a model from scratch until it reaches a satisfactory performance level. It directly measures the computational resources required to train a model. For example, [Google's BERT](https://arxiv.org/abs/1810.04805) [@devlin2018bert] is a natural language processing model that requires several days to train on a massive corpus of text data using multiple GPUs.[^lev-bert] The long training time is a significant resource consumption and cost challenge. In some cases, benchmarks can instead measure the training throughput (training samples per unit of time). Throughput can be calculated much faster and easier than training time but may obscure the metrics we really care about (e.g. time to train).
+
+[^lev-bert]: Leveraging pre-trained models like BERT can significantly reduce training time through a process called transfer learning. Instead of training a model from scratch, a pre-trained model can be fine-tined for a specific task.
 
 2. **Scalability:** How well the training process can handle increases in data size or model complexity. Scalability can be assessed by measuring training time, memory usage, and other resource consumption as data size or model complexity increases. For instance, training OpenAI's GPT-3 required extensive engineering efforts to scale the training process across many GPU nodes to handle the massive model size. This involved using specialized hardware, distributed training, and other techniques to ensure the model could be trained efficiently.
 
@@ -294,7 +308,9 @@ The following metrics are often considered important:
 
 9. **Ease of Use and Flexibility:** The ease with which the training process can be set up and used and its flexibility in handling different types of data and models. In companies like Google, efficiency can sometimes be measured by the number of Software Engineer (SWE) years saved since that translates directly to impact. Ease of use and flexibility can reduce the time and effort required to train a model. TensorFlow and PyTorch are popular machine-learning frameworks that provide user-friendly interfaces and flexible APIs for building and training machine-learning models. These frameworks support many model architectures and are equipped with tools that simplify the training process.
 
-10. **Reproducibility:** The ability to reproduce the training process results. Reproducibility is important for verifying a model's correctness and validity. However, variations due to stochastic network characteristics often make it hard to reproduce the precise behavior of applications being trained, which can present a challenge for benchmarking.
+10. **Reproducibility:** The ability to reproduce the training process results. Reproducibility is important for verifying a model's correctness and validity. However, variations due to stochastic network characteristics often make it hard to reproduce the precise behavior of applications being trained, which can present a challenge for benchmarking.[^chall-bench]
+
+[^chall-bench]: Reproducibility faces several key challenges such as differences in hardware, framework versions, and environmental factors.
 
 By benchmarking for these types of metrics, we can obtain a comprehensive view of the training process's performance and efficiency from a systems perspective. This can help identify areas for improvement and ensure that resources are used effectively.
 
@@ -302,7 +318,9 @@ By benchmarking for these types of metrics, we can obtain a comprehensive view o
 
 Here are some original works that laid the fundamental groundwork for developing systematic benchmarks for training machine learning systems.
 
-**[MLPerf Training Benchmark](https://github.com/mlcommons/training)**: MLPerf is a suite of benchmarks designed to measure the performance of machine learning hardware, software, and services. The MLPerf Training benchmark [@mattson2020mlperf] focuses on the time it takes to train models to a target quality metric. It includes diverse workloads, such as image classification, object detection, translation, and reinforcement learning. @fig-perf-trend highlights the performance improvements in progressive versions of MLPerf Training benchmarks, which have all outpaced Moore's Law. Using standardized benchmarking trends enables us to rigorously showcase the rapid evolution of ML computing.
+**[MLPerf Training Benchmark](https://github.com/mlcommons/training)**: MLPerf is a suite of benchmarks designed to measure the performance of machine learning hardware, software, and services. The MLPerf Training benchmark [@mattson2020mlperf] focuses on the time it takes to train models to a target quality metric. It includes diverse workloads, such as image classification, object detection, translation, and reinforcement learning. @fig-perf-trend highlights the performance improvements in progressive versions of MLPerf Training benchmarks, which have all outpaced Moore's Law. Using standardized benchmarking trends enables us to rigorously showcase the rapid evolution of ML computing.[^ml-computing]
+
+[^ml-computing]: While using a standardized model like MLPerf allows for easy model comparison, real-world performance can vary drastically from the benchmark results due to data preprocessing, implementation details, and hardware configuration.
 
 ![MLPerf Training performance trends. Source: @mattson2020mlperf.](images/png/mlperf_perf_trend.png){#fig-perf-trend}
 
@@ -442,14 +460,18 @@ Selecting representative tasks for benchmarking machine learning systems is comp
 1. **Diversity of Applications and Data Types:** Tasks across domains involve different data types (e.g., text, images, video) and qualities, making it difficult to find benchmarks that universally represent ML challenges.
 2. **Task Complexity and Resource Needs:** Tasks vary in complexity and resource demands, with some requiring substantial computational power and sophisticated models, while others can be addressed with simpler resources and methods.
 3. **Privacy Concerns:** Tasks involving sensitive data, such as medical records or personal information, introduce ethical and privacy issues, making them unsuitable for general benchmarks.
-4. **Evaluation Metrics:** Performance metrics vary widely across tasks, and results from one task often do not generalize to others, complicating comparisons and limiting insights from one benchmarked task to another.
+4. **Evaluation Metrics:** Performance metrics vary widely across tasks, and results from one task often do not generalize to others, complicating comparisons and limiting insights from one benchmarked task to another.[^repre-balance]
+
+[^repre-balance]: When selecting a benchmark task, it is essential to balance proper representation of real-world applications and feasibility of a standardized benchmark.
 
 Addressing these challenges is essential to designing meaningful benchmarks that are relevant across the diverse tasks encountered in machine learning, ensuring benchmarks provide useful, generalizable insights for both training and inference. 
 
 
 ### Measuring Energy Efficiency
 
-As machine learning capabilities expand, both in training and inference, concerns about increased power consumption and its ecological footprint have intensified. Addressing the sustainability of ML systems, a topic explored in more depth in the [Sustainable AI](../sustainable_ai/sustainable_ai.qmd) chapter, has thus become a key priority. This focus on sustainability has led to the development of standardized benchmarks designed to accurately measure energy efficiency. However, standardizing these methodologies poses challenges due to the need to accommodate vastly different scales—from the microwatt consumption of TinyML devices to the megawatt demands of data center training systems. Moreover, ensuring that benchmarking is fair and reproducible requires accommodating the diverse range of hardware configurations and architectures in use today.
+As machine learning capabilities expand, both in training and inference, concerns about increased power consumption and its ecological footprint have intensified. Addressing the sustainability of ML systems, a topic explored in more depth in the [Sustainable AI](../sustainable_ai/sustainable_ai.qmd) chapter, has thus become a key priority. This focus on sustainability has led to the development of standardized benchmarks designed to accurately measure energy efficiency. However, standardizing these methodologies poses challenges due to the need to accommodate vastly different scales—from the microwatt consumption of TinyML devices to the megawatt demands of data center training systems.[^train-systems] Moreover, ensuring that benchmarking is fair and reproducible requires accommodating the diverse range of hardware configurations and architectures in use today.
+
+[^train-systems]: The trade-off between model accuracy and energy efficiency will differ for different deployment scenarios like edge devices or data centers due to hardware constraints and latency requirements.
 
 One example is the MLPerf Power benchmarking methodology [@tschand2024mlperf], which tackles these challenges by tailoring the methodologies for datacenter, edge inference, and tiny inference systems while measuring power consumption as comprehensively as possible for each scale. This methodology adapts to a variety of hardware, from general-purpose CPUs to specialized AI accelerators, while maintaining uniform measurement principles to ensure that comparisons are both fair and accurate across different platforms.
 
@@ -469,7 +491,7 @@ Keyword spotting was selected as a task because it is a common use case in TinyM
 
 #### Dataset
 
-[Google Speech Commands](https://www.tensorflow.org/datasets/catalog/speech_commands) [@warden2018speech] was selected as the best dataset to represent the task. The dataset is well-established in the research community and has permissive licensing, allowing it to be easily used in a benchmark.
+[Google Speech Commands](https://www.tensorflow.org/datasets/catalog/speech_commands) [@warden2018speech] was selected as the best dataset to represent the task. The dataset is well established in the research community and has permissive licensing, allowing it to be easily used in a benchmark.
 
 #### Model
 
@@ -515,7 +537,7 @@ Hardware lottery can introduce challenges and biases in benchmarking machine lea
 
 #### Benchmark Engineering
 
-Hardware lottery occurs when a machine learning model unintentionally performs exceptionally well or poorly on a specific hardware setup due to unforeseen compatibility or incompatibility. The model is not explicitly designed or optimized for that particular hardware by the developers or engineers; rather, it happens to align or (mis)align with the hardware's capabilities or limitations. In this case, the model's performance on the hardware is a byproduct of coincidence rather than design.
+Hardware lottery occurs when a machine learning model unintentionally performs exceptionally well or poorly on a specific hardware setup due to unforeseen compatibility or incompatibility. The model is not explicitly designed or optimized for that particular hardware by the developers or engineers; rather, it happens to align or misalign with the hardware's capabilities or limitations. In this case, the model's performance on the hardware is a byproduct of coincidence rather than design.
 
 In contrast to the accidental hardware lottery, benchmark engineering involves deliberately optimizing or designing a machine learning model to perform exceptionally well on specific hardware, often to win benchmarks or competitions. This intentional optimization might include tweaking the model's architecture, algorithms, or parameters to exploit the hardware's features and capabilities fully.
 
@@ -525,7 +547,7 @@ Benchmark engineering refers to tweaking or modifying an AI system to optimize p
 
 The motivation behind benchmark engineering often stems from the desire to achieve high-performance scores for marketing or competitive purposes. High benchmark scores can demonstrate the superiority of an AI system compared to competitors and can be a key selling point for potential users or investors. This pressure to perform well on benchmarks sometimes leads to prioritizing benchmark-specific optimizations over more holistic improvements to the system.
 
-It can lead to several risks and challenges. One of the primary risks is that the AI system may perform better in real-world applications than the benchmark scores suggest. This can lead to user dissatisfaction, reputational damage, and potential safety or ethical concerns. Furthermore, benchmark engineering can contribute to a lack of transparency and accountability in the AI community, as it can be difficult to discern how much of an AI system's performance is due to genuine improvements versus benchmark-specific optimizations.
+It can lead to several risks and challenges. One of the primary risks is that the AI system may perform worse in real-world applications than the benchmark scores suggest. This can lead to user dissatisfaction, reputational damage, and potential safety or ethical concerns. Furthermore, benchmark engineering can contribute to a lack of transparency and accountability in the AI community, as it can be difficult to discern how much of an AI system's performance is due to genuine improvements versus benchmark-specific optimizations.
 
 The AI community must prioritize transparency and accountability to mitigate the risks associated with benchmark engineering. This can include disclosing any optimizations or adjustments made specifically for benchmark tests and providing more comprehensive evaluations of AI systems that include real-world performance metrics and benchmark scores. Researchers and developers must prioritize holistic improvements to AI systems that improve their generalizability and functionality across various applications rather than focusing solely on benchmark-specific optimizations.
 
@@ -543,7 +565,9 @@ There are several ways to mitigate benchmark engineering. Transparency in the be
 
 One way to achieve transparency is through the use of open-source benchmarks. Open-source benchmarks are made publicly available, allowing researchers, developers, and other stakeholders to review, critique, and contribute to them, thereby ensuring their accuracy and reliability. This collaborative approach also facilitates sharing best practices and developing more robust and comprehensive benchmarks.
 
-The modular design of MLPerf Tiny connects to the problem of benchmark engineering by providing a structured yet flexible approach that encourages a balanced evaluation of TinyML. In benchmark engineering, systems may be overly optimized for specific benchmarks, leading to inflated performance scores that don’t necessarily translate to real-world effectiveness. MLPerf Tiny’s modular design aims to address this issue by allowing contributors to swap out and test specific components within a standardized framework, such as hardware, quantization techniques, or inference models. The reference implementations, highlighted in green and orange in @fig-ml-perf, provide a baseline for results, enabling flexible yet controlled testing by specifying which components can be modified. This structure supports transparency and flexibility, enabling a focus on genuine improvements rather than benchmark-specific optimizations.
+The modular design of MLPerf Tiny connects to the problem of benchmark engineering by providing a structured yet flexible approach that encourages a balanced evaluation of TinyML. In benchmark engineering, systems may be overly optimized for specific benchmarks, leading to inflated performance scores that don’t necessarily translate to real-world effectiveness. MLPerf Tiny’s modular design aims to address this issue by allowing contributors to swap out and test specific components within a standardized framework, such as hardware, quantization techniques, or inference models.[^infer-models] The reference implementations, highlighted in green and orange in @fig-ml-perf, provide a baseline for results, enabling flexible yet controlled testing by specifying which components can be modified. This structure supports transparency and flexibility, enabling a focus on genuine improvements rather than benchmark-specific optimizations.
+
+[^infer-models]: This modular approach achieves better comparison of different versions of the same components while keeping the system-level context constant. Similarly, car benchmarks are able to compare engines directly by considering the same overall vehicle performance.
 
 ![Modular design of the MLPerf Tiny benchmark, showing the reference implementation with modifiable components. This modular approach enables flexible, targeted testing while maintaining a standardized baseline. Source: @banbury2021mlperf.](images/png/mlperf_tiny.png){#fig-ml-perf}
 
@@ -607,7 +631,9 @@ Machine learning model evaluation has evolved from a narrow focus on accuracy to
 
 Accuracy is one of the most intuitive and commonly used metrics for evaluating machine learning models. In the early stages of machine learning, accuracy was often the primary, if not the only, metric considered when evaluating model performance. However, as the field has evolved, it’s become clear that relying solely on accuracy can be misleading, especially in applications where certain types of errors carry significant consequences. 
 
-Consider the example of a medical diagnosis model with an accuracy of 95%. While at first glance this may seem impressive, we must look deeper to assess the model's performance fully. Suppose the model fails to accurately diagnose severe conditions that, while rare, can have severe consequences; its high accuracy may not be as meaningful. A well-known example of this limitation is [Google’s diabetic retinopathy model](https://about.google/intl/ALL_us/stories/seeingpotential/). While it achieved high accuracy in lab settings, it encountered challenges when deployed in real-world clinics in Thailand, where variations in patient populations, image quality, and environmental factors reduced its effectiveness. This example illustrates that even models with high accuracy need to be tested for their ability to generalize across diverse, unpredictable conditions to ensure reliability and impact in real-world settings.
+Consider the example of a medical diagnosis model with an accuracy of 95%. While at first glance this may seem impressive, we must look deeper to assess the model's performance fully. Suppose the model fails to accurately diagnose severe conditions that, while rare, can have severe consequences; its high accuracy may not be as meaningful. A well-known example of this limitation is [Google’s diabetic retinopathy model](https://about.google/intl/ALL_us/stories/seeingpotential/). While it achieved high accuracy in lab settings, it encountered challenges when deployed in real-world clinics in Thailand, where variations in patient populations, image quality, and environmental factors reduced its effectiveness. This example illustrates that even models with high accuracy need to be tested for their ability to generalize across diverse, unpredictable conditions to ensure reliability and impact in real-world settings.[^gender-shades]
+
+[^gender-shades]: The Gender Shades project by Joy Boulamwini revealed significant demographic biases in facial recognition systems despite having high overall accuracy scores. This evaluation acts as a motivating example for the need of increased transparency in AI that involves human subjects.
 
 Similarly, if the model performs well on average but exhibits significant disparities in performance across different demographic groups, this, too, would be cause for concern. The evolution of machine learning has thus seen a shift towards a more holistic approach to model evaluation, taking into account not just accuracy, but also other crucial factors such as fairness, transparency, and real-world applicability. A prime example is the [Gender Shades project](http://gendershades.org/) at MIT Media Lab, led by Joy Buolamwini, highlighting biases by performing better on lighter-skinned and male faces compared to darker-skinned and female faces.
 
@@ -699,13 +725,13 @@ The [Speech Commands dataset](https://arxiv.org/pdf/1804.03209.pdf) and its succ
 
 For the past several years, AI has focused on developing increasingly sophisticated machine learning models like large language models. The goal has been to create models capable of human-level or superhuman performance on a wide range of tasks by training them on massive datasets. This model-centric approach produced rapid progress, with models attaining state-of-the-art results on many established benchmarks. @fig-superhuman-perf shows the performance of AI systems relative to human performance (marked by the horizontal line at 0) across five applications: handwriting recognition, speech recognition, image recognition, reading comprehension, and language understanding. Over the past decade, the AI performance has surpassed that of humans.
 
-![AI vs human performane. Source: @kiela2021dynabench.](images/png/dynabench.png){#fig-superhuman-perf}
+![AI vs human performance. Source: @kiela2021dynabench.](images/png/dynabench.png){#fig-superhuman-perf}
 
 However, growing concerns about issues like bias, safety, and robustness persist even in models that achieve high accuracy on standard benchmarks. Additionally, some popular datasets used for evaluating models are beginning to saturate, with models reaching near-perfect performance on existing test splits [@kiela2021dynabench]. As a simple example, there are test images in the classic MNIST handwritten digit dataset that may look indecipherable to most human evaluators but were assigned a label when the dataset was created - models that happen to agree with those labels may appear to exhibit superhuman performance but instead may only be capturing idiosyncrasies of the labeling and acquisition process from the dataset's creation in 1994. In the same spirit, computer vision researchers now ask, "Are we done with ImageNet?" [@beyer2020we]. This highlights limitations in the conventional model-centric approach of optimizing accuracy on fixed datasets through architectural innovations.
 
 An alternative paradigm is emerging called data-centric AI. Rather than treating data as static and focusing narrowly on model performance, this approach recognizes that models are only as good as their training data. So, the emphasis shifts to curating high-quality datasets that better reflect real-world complexity, developing more informative evaluation benchmarks, and carefully considering how data is sampled, preprocessed, and augmented. The goal is to optimize model behavior by improving the data rather than just optimizing metrics on flawed datasets. Data-centric AI critically examines and enhances the data itself to produce beneficial AI. This reflects an important evolution in mindset as the field addresses the shortcomings of narrow benchmarking.
 
-This section will explore the key differences between model-centric and data-centric approaches to AI. This distinction has important implications for how we benchmark AI systems. Specifically, we will see how focusing on data quality and Efficiency can directly improve machine learning performance as an alternative to optimizing model architectures solely. The data-centric approach recognizes that models are only as good as their training data. So, enhancing data curation, evaluation benchmarks, and data handling processes can produce AI systems that are safer, fairer, and more robust. Rethinking benchmarking to prioritize data alongside models represents an important evolution as the field strives to deliver trustworthy real-world impact.
+This section will explore the key differences between model-centric and data-centric approaches to AI. This distinction has important implications for how we benchmark AI systems. Specifically, we will see how focusing on data quality and efficiency can directly improve machine learning performance as an alternative to optimizing model architectures solely. The data-centric approach recognizes that models are only as good as their training data. So, enhancing data curation, evaluation benchmarks, and data handling processes can produce AI systems that are safer, fairer, and more robust. Rethinking benchmarking to prioritize data alongside models represents an important evolution as the field strives to deliver trustworthy real-world impact.
 
 ### Limitations of Model-Centric AI
 
@@ -717,7 +743,9 @@ Second, relying on advanced algorithms can sometimes obscure the real understand
 
 Third, the emphasis on achieving state-of-the-art results on benchmark datasets can sometimes be misleading. These datasets need to represent the complexities and variability of real-world data more fully. A model that performs well on a benchmark dataset may not necessarily generalize well to new, unseen data in a real-world application. This discrepancy can lead to false confidence in the model's capabilities and hinder its practical applicability.
 
-Lastly, the model-centric approach often relies on large labeled datasets for training. However, obtaining such datasets takes time and effort in many real-world scenarios. This reliance on large datasets also limits AI's applicability in domains where data is scarce or expensive to label.
+Lastly, the model-centric approach often relies on large labeled datasets for training. However, obtaining such datasets takes time and effort in many real-world scenarios. This reliance on large datasets also limits AI's applicability in domains where data is scarce or expensive to label.[^label-expense]
+
+[^label-expense]: Labelling can be achieved through manual human labelling such as expert annotations, crowdsourcing, or dedicated data labelling teams. Multiple reviewers are usually required for quality control.
 
 As a result of the above reasons, and many more, the AI community is shifting to a more data-centric approach. Rather than focusing just on model architecture, researchers are now prioritizing curating high-quality datasets, developing better evaluation benchmarks, and considering how data is sampled and preprocessed. The key idea is that models are only as good as their training data. So, focusing on getting the right data will allow us to develop AI systems that are more fair, safe, and aligned with human values. This data-centric shift represents an important change in mindset as AI progresses.
 
@@ -758,7 +786,9 @@ Several approaches can be taken to improve data quality. These methods include a
 * **Feature Engineering:** Transforming or creating new features can significantly improve model performance by providing more relevant information for learning.
 * **Data Augmentation:** Augmenting data by creating new samples through various transformations can help improve model robustness and generalization.
 * **Active Learning:** This is a semi-supervised learning approach where the model actively queries a human oracle to label the most informative samples [@coleman2022similarity]. This ensures that the model is trained on the most relevant data.
-* **Dimensionality Reduction:** Techniques like PCA can reduce the number of features in a dataset, thereby reducing complexity and training time.
+* **Dimensionality Reduction:** Techniques like PCA[^defn-pca] can reduce the number of features in a dataset, thereby reducing complexity and training time.
+
+[^defn-pca]: **Principal Component Analysis (PCA):** a dimensionality reduction technique that simplifies complex data and preserves its most important patterns. It reduces dimensions by accounting for high correlation between features. The resulting components will be a combination of the original features to preserve the most variance, however they are not directly interpretable. PCA is particularly useful for data visualization, noise reduction, and preprocessing.
 
 There are many other methods in the wild. But the goal is the same. Refining the dataset and ensuring it is of the highest quality can reduce the training time required for models to converge. However, achieving this requires developing and implementing sophisticated methods, algorithms, and techniques that can clean, preprocess, and augment data while retaining the most informative samples. This is an ongoing challenge that will require continued research and innovation in the field of machine learning.
 
@@ -786,7 +816,7 @@ An ongoing initiative to develop standard neuromorphic benchmarks is NeuroBench 
 
 What gets measured gets improved. This chapter has explored the multifaceted nature of benchmarking spanning systems, models, and data. Benchmarking is important to advancing AI by providing the essential measurements to track progress.
 
-ML system benchmarks enable optimization across speed, Efficiency, and scalability metrics. Model benchmarks drive innovation through standardized tasks and metrics beyond accuracy. Data benchmarks highlight issues of quality, balance, and representation.
+ML system benchmarks enable optimization across speed, efficiency, and scalability metrics. Model benchmarks drive innovation through standardized tasks and metrics beyond accuracy. Data benchmarks highlight issues of quality, balance, and representation.
 
 Importantly, evaluating these components in isolation has limitations. In the future, more integrated benchmarking will likely be used to explore the interplay between system, model, and data benchmarks. This view promises new insights into co-designing data, algorithms, and infrastructure.
 

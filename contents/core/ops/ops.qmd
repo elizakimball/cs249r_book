@@ -14,7 +14,7 @@ Resources: [Slides](#sec-embedded-aiops-resource), [Videos](#sec-embedded-aiops-
 
 _What systematic principles enable continuous evolution of machine learning systems in production, and how do operational requirements shape deployment architecture?_
 
-The transition from experimental to production environments represents a fundamental challenge in scaling machine learning systems. Operational practices reveal essential patterns for maintaining reliability and adaptability throughout the system lifecycle, highlighting critical relationships between deployment architecture and continuous delivery. The implementation of MLOps frameworks draws out the key trade-offs between automation, monitoring, and governance that shape system evolution. Understanding these operational dynamics provides insights into managing complex AI workflows, establishing core principles for creating systems that remain robust and responsive in dynamic production environments.
+The transition from experimental to production environments represents a fundamental challenge in scaling machine learning systems. Operational practices reveal essential patterns for maintaining reliability and adaptability throughout the system lifecycle, highlighting critical relationships between deployment architecture and continuous delivery. The implementation of Machine Learning Operations (MLOps) frameworks draws out the key trade-offs between automation, monitoring, and governance that shape system evolution. Understanding these operational dynamics provides insights into managing complex AI workflows, establishing core principles for creating systems that remain robust and responsive in dynamic production environments.
 
 ::: {.callout-tip}
 
@@ -38,7 +38,7 @@ The transition from experimental to production environments represents a fundame
 
 ## Overview
 
-Machine Learning Operations (MLOps) is a systematic approach that combines machine learning (ML), data science, and software engineering to automate the end-to-end ML lifecycle. This includes everything from data preparation and model training to deployment and maintenance. MLOps ensures that ML models are developed, deployed, and maintained efficiently and effectively.
+MLOps is a systematic approach that combines machine learning, data science, and software engineering to automate the end-to-end ML lifecycle. This includes everything from data preparation and model training to deployment and maintenance. MLOps ensures that ML models are developed, deployed, and maintained efficiently and effectively.
 
 Let's start by taking a general example (i.e., non-edge ML) case. Consider a ridesharing company that wants to deploy a machine-learning model to predict real-time rider demand. The data science team spends months developing a model, but when it's time to deploy, they realize it needs to be compatible with the engineering team's production environment. Deploying the model requires rebuilding it from scratch, which costs weeks of additional work. This is where MLOps comes in.
 
@@ -56,7 +56,7 @@ MLOps has its roots in DevOps, a set of practices combining software development
 
 ### DevOps
 
-The term "DevOps" was first coined in 2009 by [Patrick Debois](https://www.jedi.be/), a consultant and Agile practitioner. Debois organized the first [DevOpsDays](https://www.devopsdays.org/) conference in Ghent, Belgium, in 2009. The conference brought together development and operations professionals to discuss ways to improve collaboration and automate processes.
+The term "DevOps" was first coined in 2009 by [Patrick Debois](https://www.jedi.be/), a consultant and Agile practitioner. Debois organized the first [DevOpsDays](https://www.devopsdays.org/) conference in Ghent, Belgium in 2009. The conference brought together development and operations professionals to discuss ways to improve collaboration and automate processes.
 
 DevOps has its roots in the [Agile](https://agilemanifesto.org/) movement, which began in the early 2000s. Agile provided the foundation for a more collaborative approach to software development and emphasized small, iterative releases. However, Agile primarily focuses on collaboration between development teams. As Agile methodologies became more popular, organizations realized the need to extend this collaboration to operations teams.
 
@@ -68,14 +68,16 @@ While Agile and DevOps share common principles around collaboration and feedback
 
 ### MLOps
 
-[MLOps](https://cloud.google.com/solutions/machine-learning/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning), on the other hand, stands for Machine Learning Operations, and it extends the principles of DevOps to the ML lifecycle. MLOps automates and streamlines the end-to-end ML lifecycle, from data preparation and model development to deployment and monitoring. The main focus of MLOps is to facilitate collaboration between data scientists, data engineers, and IT operations and to automate the deployment, monitoring, and management of ML models. Some key factors led to the rise of MLOps.
+[MLOps](https://cloud.google.com/solutions/machine-learning/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning), on the other hand, extends the principles of DevOps to the ML lifecycle. MLOps automates and streamlines the end-to-end ML lifecycle, from data preparation and model development to deployment and monitoring. The main focus of MLOps is to facilitate collaboration between data scientists, data engineers, and IT operations and to automate the deployment, monitoring, and management of ML models. Some key factors led to the rise of MLOps.
 
-* **Data drift:** Data drift degrades model performance over time, motivating the need for rigorous monitoring and automated retraining procedures provided by MLOps.
+* **Data drift:** Data drift degrades model performance over time, motivating the need for rigorous monitoring and automated retraining procedures provided by MLOps.[^data-drift]
 * **Reproducibility:** The lack of reproducibility in machine learning experiments motivated MLOps systems to track code, data, and environment variables to enable reproducible ML workflows.
 * **Explainability:** The black box nature and lack of explainability of complex models motivated the need for MLOps capabilities to increase model transparency and explainability.
 * **Monitoring:** The inability to reliably monitor model performance post-deployment highlighted the need for MLOps solutions with robust model performance instrumentation and alerting.
 * **Friction:** The friction in manually retraining and deploying models motivated the need for MLOps systems that automate machine learning deployment pipelines.
 * **Optimization:** The complexity of configuring machine learning infrastructure motivated the need for MLOps platforms with optimized, ready-made ML infrastructure.
+
+[^data-drift]: Data drift can amplify and reinforce historical bias and outdated representations. For example, a facial recognition system trained on one demographic will produce discriminatory outcomes as population demographics shift.
 
 While DevOps and MLOps share the common goal of automating and streamlining processes, they differ significantly in their focus and challenges. DevOps primarily deals with software development and IT operations. It enables collaboration between these teams and automate software delivery. In contrast, MLOps focuses on the machine learning lifecycle. It addresses additional complexities such as [data versioning](https://dvc.org/), [model versioning](https://dvc.org/), and [model monitoring](https://www.fiddler.ai/). MLOps requires collaboration among a broader range of stakeholders, including data scientists, data engineers, and IT operations. It goes beyond the scope of traditional DevOps by incorporating the unique challenges of managing ML models throughout their lifecycle. @tbl-mlops provides a side-by-side comparison of DevOps and MLOps, highlighting their key differences and similarities.
 
@@ -125,13 +127,17 @@ This layered approach in @fig-ops-layers demonstrates how MLOps integrates vario
 
 ### Data Management {#sec-ops-data-mgmt}
 
-Data in its raw form, whether collected from sensors, databases, apps, or other systems, often requires significant preparation before it can be used for training or inference.  Issues like inconsistent formats, missing values, and evolving labeling conventions can lead to inefficiencies and poor model performance if not systematically addressed. Robust data management practices ensure that data remains high quality, traceable, and readily accessible throughout the ML lifecycle, forming the foundation of scalable machine learning systems.
+Data in its raw form, whether collected from sensors, databases, apps, or other systems, often requires significant preparation before it can be used for training or inference.[^poor-manage] Issues like inconsistent formats, missing values, and evolving labeling conventions can lead to inefficiencies and poor model performance if not systematically addressed. Robust data management practices ensure that data remains high quality, traceable, and readily accessible throughout the ML lifecycle, forming the foundation of scalable machine learning systems.
+
+[^poor-manage]: Poor data management can create compounding technical debt. It is recommended to fix data quality issues during data collection since it can be 10x more expensive if addressed after model deployment.
 
 One key aspect of data management is version control. Tools like [Git](https://git-scm.com/), [GitHub](https://github.com/), and [GitLab](https://about.gitlab.com/) enable teams to track changes to datasets, collaborate on curation, and revert to earlier versions when necessary. Alongside versioning, annotating and labeling datasets is crucial for supervised learning tasks. Software like [LabelStudio](https://labelstud.io/) helps distributed teams tag data consistently across large-scale datasets while maintaining access to earlier versions as labeling conventions evolve. These practices not only enhance collaboration but also ensure that models are trained on reliable, well-organized data.
 
 Once prepared, datasets are typically stored on scalable cloud storage solutions like [Amazon S3](https://aws.amazon.com/s3/) or [Google Cloud Storage](https://cloud.google.com/storage). These services provide versioning, resilience, and granular access controls, safeguarding sensitive data while maintaining flexibility for analysis and modeling. To streamline the transition from raw data to analysis-ready formats, teams build automated pipelines using tools such as [Prefect](https://www.prefect.io/), [Apache Airflow](https://airflow.apache.org/), and [dbt](https://www.getdbt.com/). These pipelines automate tasks like data extraction, cleaning, deduplication, and transformation, reducing manual overhead and improving efficiency.
 
-For example, a data pipeline might ingest information from [PostgreSQL](https://www.postgresql.org/) databases, REST APIs, and CSV files stored in S3, applying transformations to produce clean, aggregated datasets. The output can be stored in feature stores like [Tecton](https://www.tecton.ai/) or [Feast](https://feast.dev/), which provide low-latency access for both training and predictions. In an industrial predictive maintenance scenario, sensor data could be processed alongside maintenance records, resulting in enriched datasets stored in Feast for models to access the latest information seamlessly.
+For example, a data pipeline might ingest information from [PostgreSQL](https://www.postgresql.org/) databases, REST APIs[^defn-rest-apis], and CSV files stored in S3, applying transformations to produce clean, aggregated datasets. The output can be stored in feature stores like [Tecton](https://www.tecton.ai/) or [Feast](https://feast.dev/), which provide low-latency access for both training and predictions. In an industrial predictive maintenance scenario, sensor data could be processed alongside maintenance records, resulting in enriched datasets stored in Feast for models to access the latest information seamlessly.
+
+[^defn-rest-apis]: **Representational State Transfer (REST) APIs:** standardized communication between software applications on the internet using HTTP methods.
 
 By integrating version control, annotation tools, storage solutions, and automated pipelines, data management becomes a critical enabler for effective [MLOps](https://cloud.google.com/solutions/machine-learning/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning). These practices ensure that data is not only clean and accessible but also consistently aligned with evolving project needs, allowing machine learning systems to deliver reliable and scalable performance in production environments.
 
@@ -149,13 +155,17 @@ By integrating version control, annotation tools, storage solutions, and automat
 
 Continuous integration and continuous delivery (CI/CD) pipelines actively automate the progression of ML models from initial development into production deployment. Adapted for ML systems, CI/CD principles empower teams to rapidly and robustly deliver new models with minimized manual errors.
 
-CI/CD pipelines orchestrate key steps, including checking out new code changes, transforming data, training and registering new models, validation testing, containerization, deploying to environments like staging clusters, and promoting to production. Teams leverage popular CI/CD solutions like [Jenkins](https://www.jenkins.io/), [CircleCI](https://circleci.com/) and [GitHub Actions](https://github.com/features/actions) to execute these MLOps pipelines, while [Prefect](https://www.prefect.io/), [Metaflow](https://metaflow.org/) and [Kubeflow](https://www.kubeflow.org/) offer ML-focused options.
+CI/CD pipelines orchestrate key steps, including checking out new code changes, transforming data, training and registering new models, validation testing, containerization[^defn-contain], deploying to environments like staging clusters, and promoting to production. Teams leverage popular CI/CD solutions like [Jenkins](https://www.jenkins.io/), [CircleCI](https://circleci.com/) and [GitHub Actions](https://github.com/features/actions) to execute these MLOps pipelines, while [Prefect](https://www.prefect.io/), [Metaflow](https://metaflow.org/) and [Kubeflow](https://www.kubeflow.org/) offer ML-focused options.
 
-@fig-ops-cicd illustrates a CI/CD pipeline specifically tailored for MLOps. The process starts with a dataset and feature repository (on the left), which feeds into a dataset ingestion stage. Post-ingestion, the data undergoes validation to ensure its quality before being transformed for training. Parallel to this, a retraining trigger can initiate the pipeline based on specified criteria. The data then passes through a model training/tuning phase within a data processing engine, followed by model evaluation and validation. Once validated, the model is registered and stored in a machine learning metadata and artifact repository. The final stage involves deploying the trained model back into the dataset and feature repository, thereby creating a cyclical process for continuous improvement and deployment of machine learning models.
+[^defn-contain]: **Containerization:** method of packaging an application and its dependencies (code, runtime, libraries, configuration files) into a single unit called a container. It ensures the application can run reliably across different computing environments.
+
+@fig-ops-cicd illustrates a CI/CD pipeline specifically tailored for MLOps. The process starts with a dataset and feature repository (on the left), which feeds into a dataset ingestion stage. Post-ingestion, the data undergoes validation to ensure its quality before being transformed for training. Parallel to this, a retraining trigger can initiate the pipeline based on specified criteria. The data then passes through a model training/tuning phase within a data processing engine, followed by model evaluation and validation. Once validated, the model is registered and stored in a machine learning metadata and artifact repository. The final stage involves deploying the trained model back into the dataset and feature repository, thereby creating a cyclical[^cyclical] process for continuous improvement and deployment of machine learning models.
+
+[^cyclical]: The cyclical nature allows for continuous monitoring, automated detection when performance falls below a threshold, and retraining to be trigger when needed.
 
 ![MLOps CI/CD diagram. Source: HarvardX.](images/png/cicd_pipelines.png){#fig-ops-cicd}
 
-For example, when a data scientist checks improvements to an image classification model into a [GitHub](https://github.com/) repository, this actively triggers a Jenkins CI/CD pipeline. The pipeline reruns data transformations and model training on the latest data, tracking experiments with [MLflow](https://mlflow.org/). After automated validation testing, teams deploy the model container to a [Kubernetes](https://kubernetes.io/) staging cluster for further QA. Once approved, Jenkins facilitates a phased rollout of the model to production with [canary deployments](https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#canary-deployments) to catch any issues. If anomalies are detected, the pipeline enables teams to roll back to the previous model version gracefully.
+For example, when a data scientist checks improvements to an image classification model into a [GitHub](https://github.com/) repository, this actively triggers a Jenkins CI/CD pipeline. The pipeline reruns data transformations and model training on the latest data, tracking experiments with [MLflow](https://mlflow.org/). After automated validation testing, teams deploy the model container to a [Kubernetes](https://kubernetes.io/) staging cluster for further quality assurance. Once approved, Jenkins facilitates a phased rollout of the model to production with [canary deployments](https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#canary-deployments) to catch any issues. If anomalies are detected, the pipeline enables teams to roll back to the previous model version gracefully.
 
 CI/CD pipelines empower teams to iterate and deliver ML models rapidly by connecting the disparate steps from development to deployment under continuous automation. Integrating MLOps tools like MLflow enhances model packaging, versioning, and pipeline traceability. CI/CD is integral for progressing models beyond prototypes into sustainable business systems.
 
@@ -169,7 +179,7 @@ Automation plays a significant role in standardizing training workflows. Capabil
 
 Cloud-managed training services have revolutionized the accessibility of high-performance hardware for training models. These services provide on-demand access to GPU-accelerated infrastructure, making advanced training feasible even for small teams. Depending on the provider, developers may manage the training workflow themselves or rely on fully managed options like [Vertex AI Fine Tuning](https://cloud.google.com/vertex-ai/docs/generative-ai/models/tune-models), which can automatically finetune a base model using a labeled dataset. However, it is important to note that GPU hardware demand often exceeds supply, and availability may vary based on region or contractual agreements, posing potential bottlenecks for teams relying on cloud services.
 
-An example workflow has a data scientist using a PyTorch notebook to develop a CNN model for image classification. The [fastai](https://www.fast.ai/) library provides high-level APIs to simplify training CNNs on image datasets. The notebook trains the model on sample data, evaluates accuracy metrics, and tunes hyperparameters like learning rate and layers to optimize performance. This reproducible notebook is version-controlled and integrated into a retraining pipeline.
+An example workflow has a data scientist using a PyTorch notebook to develop a convolutional neural network (CNN) model for image classification. The [fast.ai](https://www.fast.ai/) library provides high-level APIs to simplify training CNNs on image datasets. The notebook trains the model on sample data, evaluates accuracy metrics, and tunes hyperparameters like learning rate and layers to optimize performance. This reproducible notebook is version-controlled and integrated into a retraining pipeline.
 
 By automating and standardizing model training, leveraging managed cloud services, and integrating modern frameworks, teams can accelerate experimentation and build robust, production-ready ML models.
 
@@ -191,7 +201,9 @@ Teams need to properly package, test, and track ML models to reliably deploy the
 
 One common approach to deployment involves containerizing models using tools like [Docker](https://www.docker.com/), which package code, libraries, and dependencies into standardized units. Containers ensure smooth portability across environments, making deployment consistent and predictable. Frameworks like [TensorFlow Serving](https://www.tensorflow.org/tfx/guide/serving) and [BentoML](https://bentoml.org/) help serve predictions from deployed models via performance-optimized APIs. These frameworks handle versioning, scaling, and monitoring.
 
-Before full-scale rollout, teams deploy updated models to staging or QA environments to rigorously test performance. Techniques such as shadow or canary deployments are used to validate new models incrementally. For instance, canary deployments route a small percentage of traffic to the new model while closely monitoring performance. If no issues arise, traffic to the new model gradually increases. Robust rollback procedures are essential to handle unexpected issues, reverting systems to the previous stable model version to ensure minimal disruption. Integration with CI/CD pipelines further automates the deployment and rollback process, enabling efficient iteration cycles.
+Before full-scale rollout, teams deploy updated models to staging or QA environments[^defn-qa-env] to rigorously test performance. Techniques such as shadow or canary deployments are used to validate new models incrementally. For instance, canary deployments route a small percentage of traffic to the new model while closely monitoring performance. If no issues arise, traffic to the new model gradually increases. Robust rollback procedures are essential to handle unexpected issues, reverting systems to the previous stable model version to ensure minimal disruption. Integration with CI/CD pipelines further automates the deployment and rollback process, enabling efficient iteration cycles.
+
+[^defn-qa-env]: **Quality assurance environments:** specialized testing environments that mimic production settings. They are used for model behavior validation, integration testing, performance testing, and security testing.
 
 To maintain lineage and auditability, teams track model artifacts, including scripts, weights, logs, and metrics, using tools like [MLflow](https://mlflow.org/). Model registries, such as [Vertex AI's model registry](https://cloud.google.com/vertex-ai/docs/model-registry/introduction), act as centralized repositories for storing and managing trained models. These registries not only facilitate version comparisons but also often include access to base models, which may be open source, proprietary, or a hybrid (e.g., [LLAMA](https://ai.meta.com/llama/)). Deploying a model from the registry to an inference endpoint is streamlined, handling resource provisioning, model weight downloads, and hosting.
 
@@ -254,7 +266,9 @@ From an infrastructure perspective, teams monitor for capacity issues like high 
 
 Teams configure alerting for key monitoring metrics like accuracy declines and system faults to enable proactively responding to events that threaten reliability. For example, drops in model accuracy trigger alerts for teams to investigate potential data drift and retrain models using updated, representative data samples.
 
-After deployment, comprehensive monitoring enables teams to maintain confidence in model and system health. It empowers teams to catch and resolve deviations preemptively through data-driven alerts and dashboards. Active monitoring is essential for maintaining highly available, trustworthy ML systems.
+After deployment, comprehensive monitoring[^comp-monitor] enables teams to maintain confidence in model and system health. It empowers teams to catch and resolve deviations preemptively through data-driven alerts and dashboards. Active monitoring is essential for maintaining highly available, trustworthy ML systems.
+
+[^comp-monitor]: For best practices, multi-layer monitoring should be implemented at the model layer (accuracy, precision, recall), application layer (latency, throughput), and infrastructure layer (CPU, memory, disk usage).
 
 Watch the video below to learn more about monitoring.
 
@@ -280,13 +294,15 @@ Platforms like [Watson OpenScale](https://www.ibm.com/cloud/watson-openscale) in
 
 MLOps actively breaks down silos and enables the free flow of information and insights between teams through all ML lifecycle stages. Tools like [MLflow](https://mlflow.org/), [Weights & Biases](https://wandb.ai/), and data contexts provide traceability and visibility to improve collaboration.
 
-Teams use MLflow to systematize tracking of model experiments, versions, and artifacts. Experiments can be programmatically logged from data science notebooks and training jobs. The model registry provides a central hub for teams to store production-ready models before deployment, with metadata like descriptions, metrics, tags, and lineage. Integrations with [Github](https://github.com/), [GitLab](https://about.gitlab.com/) facilitate code change triggers.
+Teams use MLflow to systematize track model experiments, versions, and artifacts. Experiments can be programmatically logged from data science notebooks and training jobs. The model registry provides a central hub for teams to store production-ready models before deployment, with metadata like descriptions, metrics, tags, and lineage. Integrations with [Github](https://github.com/), [GitLab](https://about.gitlab.com/) facilitate code change triggers.
 
 Weights & Biases provides collaborative tools tailored to ML teams. Data scientists log experiments, visualize metrics like loss curves, and share experimentation insights with colleagues. Comparison dashboards highlight model differences. Teams discuss progress and next steps.
 
 Establishing shared data contexts—glossaries, [data dictionaries](https://en.wikipedia.org/wiki/Data_dictionary), and schema references—ensures alignment on data meaning and usage across roles. Documentation aids understanding for those without direct data access.
 
-For example, a data scientist may use Weights & Biases to analyze an anomaly detection model experiment and share the evaluation results with other team members to discuss improvements. The final model can then be registered with MLflow before handing off for deployment.
+For example, a data scientist may use Weights & Biases[^w-and-b] to analyze an anomaly detection model experiment and share the evaluation results with other team members to discuss improvements. The final model can then be registered with MLflow before handing off for deployment.
+
+[^w-and-b]: Weights & Biases can help compare training runs with different hyperparameters by creating visualizations to inspect which configurations result in the best performance on the validation dataset.
 
 Enabling transparency, traceability, and communication via MLOps empowers teams to remove bottlenecks and accelerate the delivery of impactful ML systems.
 
@@ -314,7 +330,9 @@ Unlike traditional software, ML lacks clear boundaries between components, as se
 
 ### Entanglement
 
-Tight coupling between ML model components makes isolating changes difficult. Modifying one part causes unpredictable ripple effects throughout the system. Changing anything changes everything (also known as CACE) is a phenomenon that applies to any tweak you make to your system. Potential mitigations include decomposing the problem when possible or closely monitoring for changes in behavior to contain their impact.
+Tight coupling between ML model components makes isolating changes difficult. Modifying one part causes unpredictable ripple effects throughout the system. Changing anything changes everything[^change-ex] (also known as CACE) is a phenomenon that applies to any tweak you make to your system. Potential mitigations include decomposing the problem when possible or closely monitoring for changes in behavior to contain their impact.
+
+[^change-ex]: For example, data preprocessing affects feature importance, and feature selection impacts model sensitivity.
 
 ### Correction Cascades
 
@@ -349,7 +367,9 @@ One mitigation for unstable data dependencies is to use versioning, which ensure
 
 Unlike traditional software, ML systems can change their behavior over time, making it difficult to analyze pre-deployment. This debt manifests in feedback loops, both direct and hidden.
 
-Direct feedback loops occur when a model influences its future inputs, such as by recommending products to users that, in turn, shape future training data. Hidden loops arise indirectly between models, such as two systems that interact via real-world environments. Gradual feedback loops are especially hard to detect. These loops lead to analysis debt—the inability to predict how a model will act fully after release. They undermine pre-deployment validation by enabling unmodeled self-influence.
+Direct feedback loops occur when a model influences its future inputs, such as by recommending products to users that, in turn, shape future training data. Hidden loops arise indirectly between models, such as two systems that interact via real-world environments.[^social-ex] Gradual feedback loops are especially hard to detect. These loops lead to analysis debt—the inability to predict how a model will act fully after release. They undermine pre-deployment validation by enabling unmodeled self-influence.
+
+[^social-ex]: Social media algorithms promote content that can influence future user engagement patterns, thereby altering the training data for future algorithm updates. This feedback loop creates a misleading appearance of changes in user preferences which is actually driven by the algorithm itself rather than genuine shift in user engagement.
 
 Careful monitoring and canary deployments help detect feedback. However, fundamental challenges remain in understanding complex model interactions. Architectural choices that reduce entanglement and coupling mitigate analysis debt's compounding effect.
 
@@ -379,7 +399,9 @@ Mitigating this requires building in configurability, monitoring, and modular up
 
 ### Navigating Technical Debt in Early Stages
 
-Understandably, technical debt accumulates naturally in the early stages of model development. When aiming to build MVP models quickly, teams often need more complete information on what components will reach scale or require modification. Some deferred work is expected.
+Understandably, technical debt accumulates naturally in the early stages of model development. When aiming to build MVP[^defn-mvp] models quickly, teams often need more complete information on what components will reach scale or require modification. Some deferred work is expected.
+
+[^defn-mvp]: **Minimum Viable Product model:** a simplified initial version of a model that functions as a starting point for further development. Unlike a baseline model that will only meet the simplest benchmarks, a MPV model includes a proper ML algorithm, a complete pipeline with preprocessing, and minimal feature engineering.
 
 However, even scrappy initial systems should follow principles like "Flexible Foundations" to avoid painting themselves into corners:
 
@@ -515,7 +537,10 @@ This time, we will group the subtopics under broader categories to streamline th
 
 #### Data Management
 
-In traditional centralized MLOps, data is aggregated into large datasets and data lakes, then processed on cloud or on-prem servers. However, embedded MLOps relies on decentralized data from local on-device sensors. Devices collect smaller batches of incremental data, often noisy and unstructured. With connectivity constraints, this data cannot always be instantly transmitted to the cloud and needs to be intelligently cached and processed at the edge.
+In traditional centralized MLOps, data is aggregated into large datasets and data lakes, then processed on cloud or on-prem servers. However, embedded MLOps relies on decentralized[^decentral] data from local on-device sensors. Devices collect smaller batches of incremental data, often noisy and unstructured.[^edge-accuracy] With connectivity constraints, this data cannot always be instantly transmitted to the cloud and needs to be intelligently cached and processed at the edge.
+
+[^decentral]: The decentralized nature of edge devices has several key consequences such as varying data quality standards, inconsistencies caused by unique local phenomena, and need for redundant infrastructure costs.
+[^edge-accuracy]: The accuracy of edge devices is limited by environmental conditions, hardware limitations, and connectivity issues.
 
 Due to limited on-device computing, embedded devices can only preprocess and clean data minimally before transmission. Early filtering and processing occur at edge gateways to reduce transmission loads. While leveraging cloud storage, more processing and storage happen at the edge to account for intermittent connectivity. Devices identify and transmit only the most critical subsets of data to the cloud.
 
@@ -527,7 +552,9 @@ For instance, a smartwatch may collect the day's step count, heart rate, and GPS
 
 In traditional centralized MLOps, models are trained using abundant data via deep learning on high-powered cloud GPU servers. However, embedded MLOps need more support in model complexity, data availability, and computing resources for training.
 
-The volume of aggregated data is much lower, often requiring techniques like federated learning across devices to create training sets. The specialized nature of edge data also limits public datasets for pre-training. With privacy concerns, data samples must be tightly controlled and anonymized where possible.
+The volume of aggregated data is much lower, often requiring techniques like federated learning across devices to create training sets. The specialized nature of edge data also limits public datasets for pre-training.[^ml-pre-train] With privacy concerns, data samples must be tightly controlled and anonymized where possible.
+
+[^ml-pre-train]: During pre-training, an ML model is initially trained on a large dataset to learn general features before it can be fine-tuned for a specific use case. In the context of edge data, this must be adapted by using smaller, more focused architectures, leveraging transfer learning, and accounting for limited memory and compute.
 
 Furthermore, the models must use simplified architectures optimized for low-power edge hardware. Given the computing limitations, high-end GPUs are inaccessible for intensive deep learning. Training leverages lower-powered edge servers and clusters with distributed approaches to spread load.
 
@@ -545,7 +572,9 @@ So, embedded MLOps face acute challenges in constructing training datasets, desi
 
 In traditional centralized MLOps, models are evaluated primarily using accuracy metrics and holdout test datasets. However, embedded MLOps require a more holistic evaluation that accounts for system constraints beyond accuracy.
 
-Models must be tested early and often on deployed edge hardware covering diverse configurations. In addition to accuracy, factors like latency, CPU usage, memory footprint, and power consumption are critical evaluation criteria. Models are selected based on tradeoffs between these metrics to meet edge device constraints.
+Models must be tested early and often on deployed edge hardware covering diverse configurations. In addition to accuracy, factors like latency, CPU usage, memory footprint, and power consumption are critical evaluation criteria. Models are selected based on tradeoffs between these metrics to meet edge device constraints.[^real-env]
+
+[^real-env]: Establishing realistic test environments for edge conditions requires simulating complex combinations of physical conditions and hardware variations that devices will face in deployment. It is challenging to replicate unpredictable examples of edge environments when devices will have diverse set of deployment settings.
 
 Data drift must also be monitored - where models trained on cloud data degrade in accuracy over time on local edge data. Embedded data often has more variability than centralized training sets. Evaluating models across diverse operational edge data samples is key. But sometimes, getting the data for monitoring the drift can be challenging if these devices are in the wild and communication is a barrier.
 
@@ -615,7 +644,9 @@ Edge devices require optimized data collection to transmit key monitoring metric
 
 With limited connectivity, more analysis occurs at the edge before aggregating insights centrally. Gateways play a key role in monitoring fleet health and coordinating software updates. Confirmed indicators are eventually propagated to the cloud.
 
-Broad device coverage is challenging but critical. Issues specific to certain device types may arise, so monitoring needs to cover the full spectrum. Canary deployments help trial monitoring processes before scaling.
+Broad device coverage is challenging but critical. Issues specific to certain device types may arise, so monitoring needs to cover the full spectrum. Canary deployments[^defn-canary-dep] help trial monitoring processes before scaling.
+
+[^defn-canary-dep]: **Canary deployments:** a technique where a small subject of devices receive the changes before wider deployment.
 
 Anomaly detection identifies incidents requiring rolling back models or retraining on new data. However, interpreting alerts requires understanding unique device contexts based on input from engineers and customers.
 
@@ -684,7 +715,9 @@ Edge Impulse offers a comprehensive solution for creating embedded intelligence 
 
 ##### User Interface
 
-Edge Impulse was designed with seven key principles: accessibility, end-to-end capabilities, a data-centric approach, interactiveness, extensibility, team orientation, and community support. The intuitive user interface, shown in @fig-edge-impulse-ui, guides developers at all experience levels through uploading data, selecting a model architecture, training the model, and deploying it across relevant hardware platforms. It should be noted that, like any tool, Edge Impulse is intended to assist with, not replace, foundational considerations such as determining if ML is an appropriate solution or acquiring the requisite domain expertise for a given application.
+Edge Impulse was designed with seven key principles: accessibility, end-to-end capabilities, a data-centric approach, interactiveness, extensibility, team orientation, and community support. The intuitive user interface, shown in @fig-edge-impulse-ui, guides developers at all experience levels through uploading data, selecting a model architecture, training the model, and deploying it across relevant hardware platforms. It should be noted that, like any tool, Edge Impulse is intended to assist with, not replace, foundational considerations such as determining if ML is an appropriate solution or acquiring the requisite domain expertise for a given application.[^impulse]
+
+[^impulse]: Since Edge Impulse is prioritizing ease of use, the high-level abstraction can result in lower efficiency and less optimized models compared to hand-tuned solutions.
 
 ![Screenshot of Edge Impulse user interface for building workflows from input data to output features.](images/png/edge_impulse_dashboard.png){#fig-edge-impulse-ui}
 
@@ -694,19 +727,25 @@ Thanks to the platform's visual editor, users can customize the architecture's c
 
 ##### Optimizations
 
-To accommodate the resource constraints of TinyML applications, Edge Impulse provides a confusion matrix summarizing key performance metrics, including per-class accuracy and F1 scores. The platform elucidates the tradeoffs between model performance, size, and latency using simulations in [Renode](https://renode.io/) and device-specific benchmarking. For streaming data use cases, a performance calibration tool leverages a genetic algorithm to find ideal post-processing configurations balancing false acceptance and false rejection rates. Techniques like quantization, code optimization, and device-specific optimization are available to optimize models. For deployment, models can be compiled in appropriate formats for target edge devices. Native firmware SDKs also enable direct data collection on devices.
+To accommodate the resource constraints of TinyML applications, Edge Impulse provides a confusion matrix summarizing key performance metrics, including per-class accuracy and F1 scores. The platform elucidates the tradeoffs between model performance, size, and latency using simulations in [Renode](https://renode.io/) and device-specific benchmarking. For streaming data use cases, a performance calibration tool leverages a genetic algorithm[^defn-genetic-algor] to find ideal post-processing configurations balancing false acceptance and false rejection rates. Techniques like quantization, code optimization, and device-specific optimization are available to optimize models. For deployment, models can be compiled in appropriate formats for target edge devices. Native firmware SDKs also enable direct data collection on devices.
 
-In addition to streamlining development, Edge Impulse scales the modeling process itself. A key capability is the [EON Tuner](https://docs.edgeimpulse.com/docs/edge-impulse-studio/eon-tuner), an automated machine learning (AutoML) tool that assists users in hyperparameter tuning based on system constraints. It runs a random search to generate configurations for digital signal processing and training steps quickly. The resulting models are displayed for the user to select based on relevant performance, memory, and latency metrics. For data, active learning facilitates training on a small labeled subset, followed by manually or automatically labeling new samples based on proximity to existing classes. This expands data efficiency.
+[^defn-genetic-algor]: **Genetic algorithm:** an optimization technique inspired by natural selection where solutions "evolve" over multiple generations. Better solutions are more likely to pass their characteristics to the next generation.
+
+In addition to streamlining development, Edge Impulse scales the modeling process itself. A key capability is the [EON Tuner](https://docs.edgeimpulse.com/docs/edge-impulse-studio/eon-tuner), an automated machine learning (AutoML)[^auto-ref] tool that assists users in hyperparameter tuning based on system constraints. It runs a random search to generate configurations for digital signal processing and training steps quickly. The resulting models are displayed for the user to select based on relevant performance, memory, and latency metrics. For data, active learning facilitates training on a small labeled subset, followed by manually or automatically labeling new samples based on proximity to existing classes. This expands data efficiency.
+
+[^auto-ref]: Refer to [Automation and Optimization section](https://mlsysbook.ai/contents/core/efficient_ai/efficient_ai.html#automation-and-optimization) for further information on AutoML.
 
 ##### Use Cases
 
 Beyond the accessibility of the platform itself, the Edge Impulse team has expanded the knowledge base of the embedded ML ecosystem. The platform lends itself to academic environments, having been used in online courses and on-site workshops globally. Numerous case studies featuring industry and research use cases have been published, most notably [Oura Ring](https://ouraring.com/), which uses ML to identify sleep patterns. The team has made repositories open source on GitHub, facilitating community growth. Users can also make projects public to share techniques and download libraries to share via Apache. Organization-level access enables collaboration on workflows.
 
-Overall, Edge Impulse is uniquely comprehensive and integrateable for developer workflows. Larger platforms like Google and Microsoft focus more on cloud versus embedded systems. TinyMLOps frameworks such as Neuton AI and Latent AI offer some functionality but lack Edge Impulse's end-to-end capabilities. TensorFlow Lite Micro is the standard inference engine due to flexibility, open source status, and TensorFlow integration, but it uses more memory and storage than Edge Impulse's EON Compiler. Other platforms need to be updated, academic-focused, or more versatile. In summary, Edge Impulse streamlines and scale embedded ML through an accessible, automated platform.
+Overall, Edge Impulse is uniquely comprehensive and integratable for developer workflows. Larger platforms like Google and Microsoft focus more on cloud versus embedded systems. TinyMLOps frameworks such as Neuton AI and Latent AI offer some functionality but lack Edge Impulse's end-to-end capabilities. TensorFlow Lite Micro is the standard inference engine due to flexibility, open source status, and TensorFlow integration, but it uses more memory and storage than Edge Impulse's EON Compiler. Other platforms need to be updated, academic-focused, or more versatile. In summary, Edge Impulse streamlines and scale embedded ML through an accessible, automated platform.
 
 #### Limitations
 
-While Edge Impulse provides an accessible pipeline for embedded ML, important limitations and risks remain. A key challenge is data quality and availability - the models are only as good as the data used to train them. Users must have sufficient labeled samples that capture the breadth of expected operating conditions and failure modes. Labeled anomalies and outliers are critical yet time-consuming to collect and identify. Insufficient or biased data leads to poor model performance regardless of the tool's capabilities.
+While Edge Impulse provides an accessible pipeline for embedded ML, important limitations and risks remain. A key challenge is data quality and availability - the models are only as good as the data used to train them.[^data-limit] Users must have sufficient labeled samples that capture the breadth of expected operating conditions and failure modes. Labeled anomalies and outliers are critical yet time-consuming to collect and identify. Insufficient or biased data leads to poor model performance regardless of the tool's capabilities.
+
+[^data-limit]: While this is a key limitation for all ML applications, high-quality data collection is resource intensive, making it particularly difficult for edge devices.
 
 Deploying low-powered devices also presents inherent challenges. Optimized models may still need to be more resource-intensive for ultra-low-power MCUs. Striking the right balance of compression versus accuracy takes some experimentation. The tool simplifies but still needs to eliminate the need for foundational ML and signal processing expertise. Embedded environments also constrain debugging and interpretability compared to the cloud.
 
@@ -726,7 +765,7 @@ Ready to level up your tiny machine-learning projects? Let's combine the power o
 
 ### Oura Ring
 
-The [Oura Ring](https://ouraring.com/) is a wearable that can measure activity, sleep, and recovery when placed on the user's finger. Using sensors to track physiological metrics, the device uses embedded ML to predict the stages of sleep. To establish a baseline of legitimacy in the industry, Oura conducted a correlation experiment to evaluate the device's success in predicting sleep stages against a baseline study. This resulted in a solid 62% correlation compared to the 82-83% baseline. Thus, the team set out to determine how to improve their performance even further.
+The [Oura Ring](https://ouraring.com/) is a wearable device that can measure activity, sleep, and recovery when placed on the user's finger. Using sensors to track physiological metrics, the device uses embedded ML to predict the stages of sleep. To establish a baseline of legitimacy in the industry, Oura conducted a correlation experiment to evaluate the device's success in predicting sleep stages against a baseline study. This resulted in a solid 62% correlation compared to the 82-83% baseline. Thus, the team set out to determine how to improve their performance even further.
 
 The first challenge was to obtain better data in terms of both quantity and quality. They could host a larger study to get a more comprehensive data set, but the data would be so noisy and large that it would be difficult to aggregate, scrub, and analyze. This is where Edge Impulse comes in.
 
@@ -740,7 +779,7 @@ While most ML research focuses on model-dominant steps such as training and fine
 
 Let's look at MLOps in the context of medical health monitoring to better understand how MLOps "matures" in a real-world deployment. Specifically, let's consider continuous therapeutic monitoring (CTM) enabled by wearable devices and sensors. CTM captures detailed physiological data from patients, providing the opportunity for more frequent and personalized adjustments to treatments.
 
-Wearable ML-enabled sensors enable continuous physiological and activity monitoring outside clinics, opening up possibilities for timely, data-driven therapy adjustments. For example, wearable insulin biosensors [@psoma2023wearable] and wrist-worn ECG sensors for glucose monitoring [@li2021noninvasive] can automate insulin dosing for diabetes, wrist-worn ECG and PPG sensors can adjust blood thinners based on atrial fibrillation patterns [@attia2018noninvasive; @guo2019mobile], and accelerometers tracking gait can trigger preventative care for declining mobility in the elderly [@liu2022monitoring]. The variety of signals that can now be captured passively and continuously allows therapy titration and optimization tailored to each patient's changing needs. By closing the loop between physiological sensing and therapeutic response with TinyML and on-device learning, wearables are poised to transform many areas of personalized medicine.
+Wearable ML-enabled sensors allow for continuous physiological and activity monitoring outside clinics, opening up possibilities for timely, data-driven therapy adjustments. For example, wearable insulin biosensors [@psoma2023wearable] and wrist-worn ECG sensors for glucose monitoring [@li2021noninvasive] can automate insulin dosing for diabetes, wrist-worn ECG and PPG sensors can adjust blood thinners based on atrial fibrillation patterns [@attia2018noninvasive; @guo2019mobile], and accelerometers tracking gait can trigger preventative care for declining mobility in the elderly [@liu2022monitoring]. The variety of signals that can now be captured passively and continuously allows therapy titration and optimization tailored to each patient's changing needs. By closing the loop between physiological sensing and therapeutic response with TinyML and on-device learning, wearables are poised to transform many areas of personalized medicine.
 
 ML holds great promise in analyzing CTM data to provide data-driven recommendations for therapy adjustments. But simply deploying AI models in silos, without integrating them properly into clinical workflows and decision-making, can lead to poor adoption or suboptimal outcomes. In other words, thinking about MLOps alone is insufficient to make them useful in practice. This study shows that frameworks are needed to incorporate AI and CTM into real-world clinical practice seamlessly.
 
